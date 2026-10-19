@@ -1,0 +1,87 @@
+name: Hata bildirimi
+description: Panel beklediğiniz gibi çalışmıyorsa bu formu doldurun.
+title: "[Hata] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Bildiriminiz için teşekkürler! Aşağıdaki alanları doldurmak, sorunu tek seferde çözmemizi sağlar.
+
+        ⚠️ **Gerçek çalışan adı, maaş veya müşteri bilgisi paylaşmayın.** Uydurma örnekler kullanın
+        (gerekirse depodaki `ornek-data.json` dosyasını kullanabilirsiniz).
+
+  - type: checkboxes
+    id: on-kontrol
+    attributes:
+      label: Ön kontrol
+      options:
+        - label: README'ye ve panel içindeki **Yardım** sayfasına baktım.
+          required: true
+        - label: Aynı sorunu bildiren mevcut bir kayıt var mı diye aradım.
+          required: true
+
+  - type: textarea
+    id: ne-oldu
+    attributes:
+      label: Ne oldu?
+      description: Gördüğünüz hatalı davranış. Hata mesajı varsa tam metnini yapıştırın.
+      placeholder: "Örn: Bordro sayfasında ayı değiştirdiğimde liste boş kalıyor."
+    validations:
+      required: true
+
+  - type: textarea
+    id: beklenen
+    attributes:
+      label: Ne olmasını bekliyordunuz?
+      placeholder: "Örn: Seçtiğim ayın hak ediş ve ödemelerinin listelenmesini bekliyordum."
+    validations:
+      required: true
+
+  - type: textarea
+    id: adimlar
+    attributes:
+      label: Adımlar (hatayı tekrar oluşturma)
+      description: "1, 2, 3… şeklinde yazın. Hata her seferinde mi oluyor, ara sıra mı?"
+      placeholder: |
+        1. Panele giriş yaptım
+        2. Bordro sekmesini açtım
+        3. Ayı Ekim seçtim
+        4. Liste boş göründü
+    validations:
+      required: true
+
+  - type: input
+    id: ortam
+    attributes:
+      label: Tarayıcı ve sunucu
+      description: "Tarayıcı (Chrome/Safari/…), cihaz (telefon/masaüstü) ve sunucu işletim sistemi."
+      placeholder: "Chrome 141 · masaüstü · Ubuntu 24.04"
+    validations:
+      required: true
+
+  - type: input
+    id: kurulum
+    attributes:
+      label: Kurulum bilgisi (varsa)
+      description: "Ne zaman kurduğunuz, sürüm etiketi veya git ile kurduysanız `git -C /opt/personel-panel log -1 --oneline` çıktısı."
+      placeholder: "2 hafta önce kurdum · v1.0.0"
+    validations:
+      required: false
+
+  - type: textarea
+    id: gunluk
+    attributes:
+      label: Sunucu günlüğü (varsa)
+      description: "`journalctl -u personel-panel -n 50 --no-pager` çıktısı. Parola veya oturum bilgisi varsa silin."
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: ek-bilgi
+    attributes:
+      label: Ek bilgi / ekran görüntüsü
+      description: Görseli buraya sürükleyip bırakabilirsiniz. Gerçek isim ve tutarları kapatmayı unutmayın.
+    validations:
+      required: false

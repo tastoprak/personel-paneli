@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Kullanım kılavuzu ve kurulum (README, Türkçe)
+    url: https://github.com/tastoprak/personel-paneli#readme
+    about: Kurulum, güncelleme, veri biçimi ve sayfaların nasıl çalıştığı burada anlatılıyor.
+  - name: Installation & user guide (README, English)
+    url: https://github.com/tastoprak/personel-paneli/blob/main/README.en.md
+    about: How to install, update and use the panel.
+  - name: Güvenlik açığı bildirimi (özel)
+    url: https://github.com/tastoprak/personel-paneli/security/advisories/new
+    about: Güvenlikle ilgili konuları herkese açık issue yerine özel olarak bildirin.

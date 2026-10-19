@@ -1,0 +1,56 @@
+name: Özellik önerisi
+description: Panelde görmek istediğiniz bir yenilik mi var?
+title: "[Öneri] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Öneriniz için teşekkürler! Bu proje bilinçli olarak küçük ve sade kalır:
+        **harici bağımlılık yok** (kütüphane, veritabanı, bulut servisi, CDN) ilkesini koruyan
+        öneriler öncelik alır. Ayrıntı için README'deki *Sınırlar* bölümüne bakabilirsiniz.
+
+  - type: checkboxes
+    id: uygunluk
+    attributes:
+      label: Uygunluk
+      options:
+        - label: Öneri, harici bağımlılık veya dış servis gerektirmiyor.
+          required: true
+        - label: Benzer bir öneri var mı diye aradım.
+          required: true
+
+  - type: textarea
+    id: sorun
+    attributes:
+      label: Hangi sorunu çözüyor?
+      description: "Özellik gelmeden önce yaşadığınız zorluğu anlatın — çözümden daha önemlisi bu."
+      placeholder: "Örn: Her ay sonunda geçen aya ait ödemeleri elle karşılaştırmak zorunda kalıyorum."
+    validations:
+      required: true
+
+  - type: textarea
+    id: cozum
+    attributes:
+      label: Önerilen çözüm
+      placeholder: "Örn: Bordro sayfasında 'önceki ay' düğmesi olsun."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatif
+    attributes:
+      label: Denediğiniz alternatifler / ek bilgi
+    validations:
+      required: false
+
+  - type: dropdown
+    id: katki
+    attributes:
+      label: Kod yazıp katkı vermek ister misiniz?
+      options:
+        - Hayır, sadece öneriyorum
+        - Belki, yol gösterirseniz
+        - Evet, pull request gönderebilirim
+    validations:
+      required: true

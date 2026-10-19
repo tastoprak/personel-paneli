@@ -1,0 +1,56 @@
+name: Feature request
+description: Something you would like the panel to do.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion! This project is deliberately small and boring:
+        proposals that keep the **zero dependencies** promise (no libraries, no database,
+        no cloud service, no CDN) get priority. See the *Limits* section of the README.
+
+  - type: checkboxes
+    id: fit
+    attributes:
+      label: Fit
+      options:
+        - label: The proposal needs no external dependency or third-party service.
+          required: true
+        - label: I searched existing issues for a similar request.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does it solve?
+      description: "Describe the difficulty you have today — that matters more than the solution."
+      placeholder: "e.g. At the end of each month I have to compare last month's payments by hand."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      placeholder: "e.g. A 'previous month' button on the Payroll page."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you tried / extra info
+    validations:
+      required: false
+
+  - type: dropdown
+    id: contribute
+    attributes:
+      label: Would you like to contribute code?
+      options:
+        - No, just suggesting
+        - Maybe, with some guidance
+        - Yes, I can open a pull request
+    validations:
+      required: true

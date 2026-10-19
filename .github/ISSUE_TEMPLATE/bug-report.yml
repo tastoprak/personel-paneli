@@ -1,0 +1,90 @@
+name: Bug report
+description: The panel does not behave the way you expect.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. Filling in the fields below usually lets us fix
+        the problem in one pass.
+
+        ⚠️ **Never paste real employee names, salaries or customer data.** Use made-up examples
+        (the repository ships `ornek-data.json` you can use instead).
+
+        ℹ️ The project is developed in Turkish; English reports are welcome and answered as time allows.
+
+  - type: checkboxes
+    id: pre-check
+    attributes:
+      label: Before submitting
+      options:
+        - label: I read the README and the in-app **Yardım** (Help) page.
+          required: true
+        - label: I searched existing issues for the same problem.
+          required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the wrong behaviour. Paste the full error message if there is one.
+      placeholder: "e.g. Changing the month on the Payroll page leaves the list empty."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      placeholder: "e.g. I expected the accruals and payments of the selected month to be listed."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Write them as 1, 2, 3… Does it happen every time or only sometimes?
+      placeholder: |
+        1. Logged in to the panel
+        2. Opened the Payroll tab
+        3. Selected October
+        4. The list appeared empty
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and server
+      description: "Browser (Chrome/Safari/…), device (phone/desktop) and server OS."
+      placeholder: "Chrome 141 · desktop · Ubuntu 24.04"
+    validations:
+      required: true
+
+  - type: input
+    id: install
+    attributes:
+      label: Install details (if known)
+      description: "When you installed it, the release tag, or `git -C /opt/personel-panel log -1 --oneline` if installed via git."
+      placeholder: "installed 2 weeks ago · v1.0.0"
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Server log (if any)
+      description: "Output of `journalctl -u personel-panel -n 50 --no-pager`. Remove passwords or session values."
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra info / screenshots
+      description: Drag and drop images here. Please blur real names and amounts.
+    validations:
+      required: false
