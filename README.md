@@ -161,8 +161,12 @@ Testler `ornek-data.json` ile çalışır; kendi verinize dokunmaz. GitHub Actio
 
 ## Katkı
 
-Hata bildirimi ve öneriler için issue açabilirsiniz. Kod değişikliği önerirken testleri çalıştırın
-(`node test/test_mantik.js && bash test/test_http.sh`).
+Hata bildirimi ve öneriler için **issue formlarını** kullanın (depoda hazır şablonlar var: *hata bildirimi* ve
+*özellik önerisi*; her iki dilde). Bildirimlerde **gerçek çalışan adı, maaş veya müşteri bilgisi paylaşmayın** —
+uydurma örnekler (bkz. `ornek-data.json`) sorunu çözmek için yeterlidir. Güvenlikle ilgili konuları
+[özel olarak](https://github.com/tastoprak/personel-paneli/security/advisories/new) bildirin.
+
+Kod değişikliği önerirken testleri çalıştırın (`node test/test_mantik.js && bash test/test_http.sh`).
 
 ## Lisans
 

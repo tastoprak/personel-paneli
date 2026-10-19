@@ -121,6 +121,15 @@ They run against `ornek-data.json` and never touch your data. CI runs on every p
 - Not a payroll system: it tracks amounts you enter, it does not compute taxes/SGK.
 - Overtime hours are informational; the paid amount is entered as an accrual (avoiding double counting).
 
+## Contributing
+
+Please use the **issue forms** for bug reports and feature requests (the repository ships templates in both
+Turkish and English). **Never include real employee names, salaries or customer data** in a report — made-up
+examples (see `ornek-data.json`) are enough to reproduce a problem. Report security issues
+[privately](https://github.com/tastoprak/personel-paneli/security/advisories/new).
+
+When proposing a code change, run the tests (`node test/test_mantik.js && bash test/test_http.sh`).
+
 ## License
 
 [MIT](LICENSE) — free to use, modify and distribute, including commercially.
