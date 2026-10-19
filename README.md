@@ -40,7 +40,7 @@ Diğer özellikler:
 ## Hızlı başlangıç (deneme)
 
 ```bash
-git clone <depo-adresi> personel-paneli
+git clone https://github.com/tastoprak/personel-paneli.git
 cd personel-paneli
 cp ornek-data.json data.json            # örnek veri (kendi verinizle değiştirin)
 

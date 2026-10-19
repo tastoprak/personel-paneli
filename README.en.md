@@ -39,7 +39,7 @@ Also:
 ## Quick start (try it)
 
 ```bash
-git clone <repo-url> personel-paneli
+git clone https://github.com/tastoprak/personel-paneli.git
 cd personel-paneli
 cp ornek-data.json data.json          # sample data — replace with your own
 
