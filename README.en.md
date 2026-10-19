@@ -2,6 +2,8 @@
 
 [Turkish](README.md) · English
 
+[![tests](https://github.com/tastoprak/personel-paneli/actions/workflows/test.yml/badge.svg)](https://github.com/tastoprak/personel-paneli/actions/workflows/test.yml)
+
 **A single-file staff & payroll tracking panel** for small businesses: employees, cash advances,
 overtime, monthly accruals and payments. **Zero third-party dependencies** — Python standard library
 only, one HTML file, and all data in a single JSON file on your server.

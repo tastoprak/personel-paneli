@@ -2,6 +2,8 @@
 
 [English](README.en.md) · Türkçe
 
+[![testler](https://github.com/tastoprak/personel-paneli/actions/workflows/test.yml/badge.svg)](https://github.com/tastoprak/personel-paneli/actions/workflows/test.yml)
+
 **Tek dosyalık personel takip paneli.** Küçük işletmeler için çalışan, avans, mesai,
 hak ediş ve bordro takibi. **Hiçbir üçüncü taraf bağımlılığı yok** — yalnızca Python
 standart kütüphanesi ve tek bir HTML dosyası; veri sunucudaki tek bir JSON dosyasında durur.
