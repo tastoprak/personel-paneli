@@ -1,0 +1,296 @@
+{
+ "calisanlar": [
+  {
+   "kod": "K001",
+   "ad": "Ali Yılmaz",
+   "pozisyon": "Kaynakçı",
+   "maas": 32000.0,
+   "mesaiSaatUcret": 200.0,
+   "girisTarihi": "2023-03-15",
+   "not": "",
+   "devir": 62400.0,
+   "aktif": true
+  },
+  {
+   "kod": "K002",
+   "ad": "Ayşe Demir",
+   "pozisyon": "Montaj",
+   "maas": 28500.0,
+   "mesaiSaatUcret": 180.0,
+   "girisTarihi": "2024-06-03",
+   "not": "",
+   "devir": 45750.0,
+   "aktif": true
+  },
+  {
+   "kod": "K003",
+   "ad": "Mehmet Kaya",
+   "pozisyon": "Depo Sorumlusu",
+   "maas": 26000.0,
+   "mesaiSaatUcret": 165.0,
+   "girisTarihi": "2022-11-21",
+   "not": "Ehliyet: C sınıfı",
+   "devir": 58200.0,
+   "aktif": true
+  },
+  {
+   "kod": "K004",
+   "ad": "Zeynep Şahin",
+   "pozisyon": "Ön Muhasebe",
+   "maas": 30000.0,
+   "mesaiSaatUcret": 190.0,
+   "girisTarihi": "2024-01-08",
+   "not": "",
+   "devir": 33100.0,
+   "aktif": true
+  },
+  {
+   "kod": "K005",
+   "ad": "Burak Çelik",
+   "pozisyon": "Satış Temsilcisi",
+   "maas": 35000.0,
+   "mesaiSaatUcret": 220.0,
+   "girisTarihi": "2023-09-04",
+   "not": "",
+   "devir": 49600.0,
+   "aktif": true
+  }
+ ],
+ "avanslar": [
+  {
+   "tarih": "2026-09-04",
+   "kod": "K002",
+   "tutar": 2500.0,
+   "aciklama": "Bayram öncesi avans",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-09-22",
+   "kod": "K005",
+   "tutar": 3000.0,
+   "aciklama": "Yol avansı",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-10-05",
+   "kod": "K001",
+   "tutar": 2000.0,
+   "aciklama": "Nakit avans"
+  },
+  {
+   "tarih": "2026-10-08",
+   "kod": "K003",
+   "tutar": 3000.0,
+   "aciklama": "Nakit avans"
+  },
+  {
+   "tarih": "2026-10-12",
+   "kod": "K002",
+   "tutar": 1500.0,
+   "aciklama": "Nakit avans"
+  },
+  {
+   "tarih": "2026-10-15",
+   "kod": "K005",
+   "tutar": 1000.0,
+   "aciklama": "Yakıt avansı"
+  }
+ ],
+ "mesailer": [
+  {
+   "tarih": "2026-09-12",
+   "kod": "K001",
+   "saat": 2.0,
+   "sebep": "Sevkiyat",
+   "onay": "Onaylı",
+   "aciklama": "Sevkiyat / Onaylı",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-09-19",
+   "kod": "K003",
+   "saat": 3.0,
+   "sebep": "Sayım",
+   "onay": "Onaylı",
+   "aciklama": "Sayım / Onaylı",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-10-03",
+   "kod": "K001",
+   "saat": 3.0,
+   "sebep": "Sevkiyat",
+   "onay": "Onaylı",
+   "aciklama": "Sevkiyat / Onaylı"
+  },
+  {
+   "tarih": "2026-10-06",
+   "kod": "K002",
+   "saat": 2.0,
+   "sebep": "Montaj",
+   "onay": "Onaylı",
+   "aciklama": "Montaj / Onaylı"
+  },
+  {
+   "tarih": "2026-10-09",
+   "kod": "K003",
+   "saat": 4.0,
+   "sebep": "Sayım",
+   "onay": "Onaylı",
+   "aciklama": "Sayım / Onaylı"
+  },
+  {
+   "tarih": "2026-10-11",
+   "kod": "K001",
+   "saat": 2.5,
+   "sebep": "Boya",
+   "onay": "Bekliyor",
+   "aciklama": "Boya / Bekliyor"
+  },
+  {
+   "tarih": "2026-10-14",
+   "kod": "K005",
+   "saat": 3.0,
+   "sebep": "Fuar",
+   "onay": "Onaylı",
+   "aciklama": "Fuar / Onaylı"
+  }
+ ],
+ "hakEdisler": [
+  {
+   "tarih": "2026-08-31",
+   "kod": "K001",
+   "tutar": 32000.0,
+   "aciklama": "Ağustos 2026 hak edişi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-08-31",
+   "kod": "K002",
+   "tutar": 28500.0,
+   "aciklama": "Ağustos 2026 hak edişi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-08-31",
+   "kod": "K003",
+   "tutar": 26000.0,
+   "aciklama": "Ağustos 2026 hak edişi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-08-31",
+   "kod": "K004",
+   "tutar": 30000.0,
+   "aciklama": "Ağustos 2026 hak edişi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-08-31",
+   "kod": "K005",
+   "tutar": 35000.0,
+   "aciklama": "Ağustos 2026 hak edişi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-09-30",
+   "kod": "K001",
+   "tutar": 32000.0,
+   "aciklama": "Eylül 2026 hak edişi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-09-30",
+   "kod": "K002",
+   "tutar": 28500.0,
+   "aciklama": "Eylül 2026 hak edişi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-09-30",
+   "kod": "K003",
+   "tutar": 26000.0,
+   "aciklama": "Eylül 2026 hak edişi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-09-30",
+   "kod": "K004",
+   "tutar": 30000.0,
+   "aciklama": "Eylül 2026 hak edişi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-09-30",
+   "kod": "K005",
+   "tutar": 35000.0,
+   "aciklama": "Eylül 2026 hak edişi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-10-31",
+   "kod": "K001",
+   "tutar": 32000.0,
+   "aciklama": "Ekim 2026 hak edişi"
+  },
+  {
+   "tarih": "2026-10-31",
+   "kod": "K002",
+   "tutar": 28500.0,
+   "aciklama": "Ekim 2026 hak edişi"
+  },
+  {
+   "tarih": "2026-10-31",
+   "kod": "K003",
+   "tutar": 26000.0,
+   "aciklama": "Ekim 2026 hak edişi"
+  },
+  {
+   "tarih": "2026-10-31",
+   "kod": "K004",
+   "tutar": 30000.0,
+   "aciklama": "Ekim 2026 hak edişi"
+  },
+  {
+   "tarih": "2026-10-31",
+   "kod": "K005",
+   "tutar": 35000.0,
+   "aciklama": "Ekim 2026 hak edişi"
+  }
+ ],
+ "odemeler": [
+  {
+   "tarih": "2026-09-05",
+   "kod": "K001",
+   "tutar": 32000.0,
+   "aciklama": "Ağustos 2026 maaş ödemesi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-09-05",
+   "kod": "K003",
+   "tutar": 26000.0,
+   "aciklama": "Ağustos 2026 maaş ödemesi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-09-05",
+   "kod": "K004",
+   "tutar": 30000.0,
+   "aciklama": "Ağustos 2026 maaş ödemesi",
+   "arsiv": true
+  },
+  {
+   "tarih": "2026-10-03",
+   "kod": "K001",
+   "tutar": 32000.0,
+   "aciklama": "Eylül 2026 maaş ödemesi"
+  },
+  {
+   "tarih": "2026-10-03",
+   "kod": "K004",
+   "tutar": 30000.0,
+   "aciklama": "Eylül 2026 maaş ödemesi"
+  }
+ ]
+}

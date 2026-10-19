@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__AD__</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#1a1a18;min-height:100vh}
+  .app{display:flex;flex-direction:column;min-height:100vh}
+
+  /* HEADER */
+  .hdr{background:#fff;border-bottom:1px solid #e8e8e5;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06);gap:12px;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo-ic{width:34px;height:34px;background:#B33A2B;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff}
+  .logo-t{font-size:15px;font-weight:600;color:#1a1a18}
+  .logo-s{font-size:11px;color:#888}
+  .nav{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+  .nb{background:none;border:none;padding:7px 13px;border-radius:8px;font-size:13px;color:#666;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;font-family:inherit}
+  .nb:hover{background:#f0f0ee;color:#1a1a18}
+  .nb.on{background:#FEF0EE;color:#B33A2B;font-weight:500}
+  .nb svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .ds{display:flex;align-items:center;gap:8px;font-size:12px;color:#888}
+  .dd{width:7px;height:7px;border-radius:50%;background:#22c55e;transition:background .3s;flex-shrink:0}
+  .dd.spin{background:#f59e0b;animation:pu 1s infinite}
+  .dd.err{background:#ef4444}
+  @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* BODY */
+  .body{flex:1;padding:24px;max-width:1200px;margin:0 auto;width:100%}
+  .pg{display:none}.pg.on{display:block}
+
+  /* STAT GRID */
+  .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+  .sc{background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e5}
+  .sl{font-size:11px;color:#888;margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+  .sv{font-size:22px;font-weight:600;color:#1a1a18}
+  .sc.ac{border-left:3px solid #B33A2B}.sc.ac .sv{color:#B33A2B}
+  .sc.su .sv{color:#16a34a}
+  .sc.wa .sv{color:#d97706}
+  .ss{font-size:11px;color:#aaa;margin-top:3px}
+
+  /* CARDS */
+  .card{background:#fff;border:1px solid #e8e8e5;border-radius:12px;padding:16px;margin-bottom:16px}
+  .tc2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+
+  /* SECTION TITLE */
+  .stl{font-size:13px;font-weight:600;color:#1a1a18;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+  .stl svg{width:16px;height:16px;stroke:#888;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  /* TABLE */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;padding:9px 11px;font-size:10px;font-weight:600;color:#888;border-bottom:1px solid #e8e8e5;text-transform:uppercase;letter-spacing:.05em;background:#fafaf8;white-space:nowrap}
+  td{padding:9px 11px;border-bottom:1px solid #f0f0ee;color:#1a1a18;vertical-align:middle}
+  th.r,td.r{text-align:right}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:#fafaf8}
+  tfoot td{font-weight:600;background:#fafaf8;border-top:1px solid #e8e8e5}
+
+  /* BADGES */
+  .bdg{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;white-space:nowrap}
+  .bdg.g{background:#dcfce7;color:#15803d}
+  .bdg.a{background:#fef3c7;color:#b45309}
+  .bdg.b{background:#FEF0EE;color:#B33A2B}
+  .bdg.r{background:#fee2e2;color:#dc2626}
+  .bdg.gr{background:#f0f0ee;color:#666}
+
+  /* AVATAR */
+  .av{width:30px;height:30px;border-radius:50%;background:#FEF0EE;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#B33A2B;margin-right:8px;vertical-align:middle}
+
+  /* FORM */
+  .fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  .fr3{grid-template-columns:1fr 1fr 1fr}
+  .fd{display:flex;flex-direction:column;gap:5px}
+  .fd label{font-size:12px;color:#666;font-weight:500}
+  .fd input,.fd select{font-size:13px;padding:8px 11px;border-radius:8px;border:1px solid #e8e8e5;background:#fff;color:#1a1a18;width:100%;font-family:inherit;transition:border-color .15s}
+  .fd input:focus,.fd select:focus{outline:none;border-color:#B33A2B;box-shadow:0 0 0 3px rgba(179,58,43,.1)}
+
+  /* BUTTONS */
+  .bp{background:#B33A2B;color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-weight:500;transition:opacity .15s}
+  .bp:hover{opacity:.88}
+  .bs{background:none;border:1px solid #e8e8e5;color:#1a1a18;padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit}
+  .bs:hover{background:#f5f5f3}
+  .bd{background:none;border:1px solid #fecaca;color:#dc2626;padding:5px 9px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit}
+  .bd:hover{background:#fee2e2}
+  .bk{background:none;border:1px solid #e8e8e5;color:#666;padding:5px 9px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit}
+  .bk:hover{background:#f0f0ee}
+  .bag{background:none;border:1px solid #fde68a;color:#b45309;padding:5px 9px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit}
+  .bag:hover{background:#fffbeb}
+
+  /* SEARCH */
+  .sb{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e8e8e5;border-radius:8px;padding:7px 12px;margin-bottom:14px}
+  .sb svg{color:#aaa;width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+  .sb input{border:none;background:none;font-size:13px;color:#1a1a18;flex:1;outline:none;font-family:inherit}
+
+  /* TABS */
+  .tabs{display:flex;gap:2px;border-bottom:1px solid #e8e8e5;margin-bottom:16px}
+  .tab{padding:8px 14px;font-size:13px;color:#888;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none}
+  .tab:hover{color:#1a1a18}
+  .tab.on{color:#B33A2B;border-bottom-color:#B33A2B;font-weight:500}
+  .tp{display:none}.tp.on{display:block}
+
+  /* PAGE HEADER */
+  .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+
+  /* EMPTY */
+  .empty{text-align:center;padding:36px;color:#aaa;font-size:13px}
+
+  /* FILTER ROW */
+  .frow{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:12px;color:#666;flex-wrap:wrap}
+  .frow select{font-size:12px;padding:6px 9px;border-radius:8px;border:1px solid #e8e8e5;background:#fff;color:#1a1a18;font-family:inherit}
+  .frow label{display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none}
+
+  /* BAR */
+  .bar{height:6px;border-radius:999px;background:#f0f0ee;overflow:hidden;min-width:60px}
+  .bar i{display:block;height:100%;background:#B33A2B;border-radius:999px}
+
+  /* UYARI */
+  .not{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:8px;padding:9px 12px;font-size:12px;margin-bottom:14px;line-height:1.5}
+  .not b{font-weight:600}
+  .not.kirmizi{background:#fef2f2;border-color:#fecaca;color:#991b1b;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .not.kirmizi .btns{display:flex;gap:8px;flex-wrap:wrap}
+
+  .boz{display:flex;gap:20px;font-size:12px;color:#666;flex-wrap:wrap;align-items:flex-end}
+  .boz strong{color:#1a1a18;font-weight:600}
+  .boz .dg{color:#16a34a}
+  .boz .dr{color:#dc2626}
+  .muted{color:#aaa;font-size:11px}
+  .onizleme{color:#16a34a;font-weight:600}
+
+  @media(max-width:820px){
+    .sg{grid-template-columns:1fr 1fr}
+    .tc2{grid-template-columns:1fr}
+    .fr,.fr3{grid-template-columns:1fr}
+    .nav .nb span{display:none}
+    .body{padding:14px}
+    .scroll{overflow-x:auto}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="hdr">
+  <div class="logo">
+    <div class="logo-ic">__IKON__</div>
+    <div>
+      <div class="logo-t">__AD__</div>
+      <div class="logo-s">__ALT_SATIR__</div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nb on" onclick="pg('dashboard',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Özet</span>
+    </button>
+    <button class="nb" onclick="pg('calisanlar',this)">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Çalışanlar</span>
+    </button>
+    <button class="nb" onclick="pg('avanslar',this)">
+      <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      <span>Avanslar</span>
+    </button>
+    <button class="nb" onclick="pg('mesailer',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Mesailer</span>
+    </button>
+    <button class="nb" onclick="pg('bordro',this)">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Bordro</span>
+    </button>
+    <button class="nb" onclick="pg('yedekler',this)">
+      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
+      <span>Yedekler</span>
+    </button>
+    <button class="nb" onclick="pg('yardim',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>Yardım</span>
+    </button>
+    <button class="nb" onclick="icerikYenile()" title="Sunucudan yeniden yükle">
+      <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.5L1 10"/></svg>
+    </button>
+    <form method="post" action="cikis" style="margin:0">
+      <button class="nb" type="submit" title="Çıkış yap">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </form>
+  </div>
+  <div class="ds">
+    <div class="dd" id="dd"></div>
+    <span id="dst">Yükleniyor...</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div id="taslak-alani"></div>
+  <div id="uyari-alani"></div>
+
+  <!-- ======================= ÖZET ======================= -->
+  <div class="pg on" id="pg-dashboard">
+    <div class="frow" style="margin-bottom:12px">
+      <label style="font-weight:600;color:#1a1a18">Bakiye hesabı:</label>
+      <div class="tabs" style="border:none;margin:0">
+        <button class="tab on" id="kip-hepsi" onclick="kipAyarla('hepsi')">Tüm kayıtlar</button>
+        <button class="tab" id="kip-bugun" onclick="kipAyarla('bugun')">Bugüne kadar</button>
+      </div>
+      <span class="muted" id="kip-aciklama"></span>
+    </div>
+    <div class="sg">
+      <div class="sc ac"><div class="sl">Toplam personel bakiyesi</div><div class="sv" id="s-toplam">—</div><div class="ss" id="s-toplam-alt">Ödenmesi gereken toplam</div></div>
+      <div class="sc"><div class="sl">Aktif çalışan</div><div class="sv" id="s-cal">—</div><div class="ss" id="s-cal-alt">Kayıtlı personel</div></div>
+      <div class="sc su"><div class="sl">Bu ay hak ediş</div><div class="sv" id="s-hak">—</div><div class="ss" id="s-hak-alt">—</div></div>
+      <div class="sc wa"><div class="sl">Bu ay avans + ödeme</div><div class="sv" id="s-av">—</div><div class="ss" id="s-av-alt">—</div></div>
+    </div>
+    <div class="tc2">
+      <div class="card"><div class="stl"><svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>Bakiye dağılımı</div><div id="bakiye-list"></div></div>
+      <div class="card"><div class="stl"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Bu ayın mesaileri</div><div id="son-mes"></div></div>
+    </div>
+    <div class="card"><div class="stl"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Son avans hareketleri</div><div id="son-av"></div></div>
+  </div>
+
+  <!-- ==================== ÇALIŞANLAR ==================== -->
+  <div class="pg" id="pg-calisanlar">
+    <div class="ph"><div class="stl" style="margin:0"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Çalışanlar</div><button class="bp" onclick="swt('c','ekle')">+ Yeni çalışan</button></div>
+    <div class="tabs"><button class="tab on" onclick="swt('c','liste')">Liste</button><button class="tab" onclick="swt('c','ekle')">Yeni ekle</button></div>
+    <div class="tp on" id="tc-liste">
+      <div class="frow">
+        <div class="sb" style="flex:1;min-width:220px;margin:0"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="İsim veya kod ara..." id="ara" oninput="rC()"></div>
+        <label><input type="checkbox" id="pasif-goster" onchange="rC()"> Pasifleri göster</label>
+        <span class="muted" id="c-kip"></span>
+      </div>
+      <div class="card scroll" style="padding:0"><table>
+        <thead><tr><th>Kod</th><th>Ad soyad</th><th>Pozisyon</th><th class="r">Net maaş</th><th class="r">Saat ücreti</th><th class="r">Bakiye</th><th>Giriş</th><th></th></tr></thead>
+        <tbody id="ctb"></tbody>
+        <tfoot id="ctf"></tfoot>
+      </table></div>
+    </div>
+    <div class="tp" id="tc-ekle">
+      <div class="card">
+        <div class="stl" id="c-form-baslik">Yeni çalışan ekle</div>
+        <div class="fr"><div class="fd"><label>Çalışan kodu</label><input id="ykod" placeholder="K031"></div><div class="fd"><label>Ad soyad</label><input id="yad" placeholder="Ad Soyad"></div></div>
+        <div class="fr fr3">
+          <div class="fd"><label>Pozisyon</label><input id="ypoz" list="pozisyonlar" placeholder="Çalışan"><datalist id="pozisyonlar"></datalist></div>
+          <div class="fd"><label>Net maaş</label><input id="ymaas" inputmode="decimal" placeholder="28.000"><span class="muted onizleme" id="ymaas-onizleme"></span></div>
+          <div class="fd"><label>Mesai saat ücreti</label><input id="ymuc" inputmode="decimal" placeholder="104"><span class="muted onizleme" id="ymuc-onizleme"></span></div>
+        </div>
+        <div class="fr fr3">
+          <div class="fd"><label>İşe giriş tarihi</label><input type="date" id="ytar"></div>
+          <div class="fd"><label>Devir bakiyesi</label><input id="ydevir" inputmode="decimal" placeholder="0"><span class="muted">Kesim (01.10.2026) öncesi biriken bakiye</span><span class="muted onizleme" id="ydevir-onizleme"></span></div>
+          <div class="fd"><label>Not</label><input id="ynot" placeholder="Sigorta kapsam dışı"></div>
+        </div>
+        <button class="bp" onclick="kaydetC()">✓ Kaydet</button>
+        <button class="bs" onclick="formTemizle()">Vazgeç</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== AVANSLAR ===================== -->
+  <div class="pg" id="pg-avanslar">
+    <div class="ph"><div class="stl" style="margin:0"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Avanslar</div><button class="bp" onclick="swt('a','a-ekle')">+ Avans ekle</button></div>
+    <div class="tabs"><button class="tab on" onclick="swt('a','a-liste')">Tüm avanslar</button><button class="tab" onclick="swt('a','a-ekle')">Yeni avans</button></div>
+    <div class="tp on" id="ta-liste">
+      <div class="frow">
+        <div class="sb" style="flex:1;min-width:200px;margin:0"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Çalışan ara..." id="av-ara" oninput="rA()"></div>
+        <label>Ay:</label><select id="av-ay" onchange="rA()"><option value="">Tümü</option></select>
+        <label><input type="checkbox" id="av-arsiv" onchange="rA()"> Arşivi göster</label>
+        <label><input type="checkbox" id="av-silinen" onchange="rA()"> Silinenleri göster</label>
+      </div>
+      <div class="card scroll" style="padding:0"><table>
+        <thead><tr><th>Tarih</th><th>Çalışan</th><th class="r">Tutar</th><th>Açıklama</th><th></th></tr></thead>
+        <tbody id="atb"></tbody>
+        <tfoot id="atf"></tfoot>
+      </table></div>
+    </div>
+    <div class="tp" id="ta-ekle">
+      <div class="card">
+        <div class="fr fr3">
+          <div class="fd"><label>Tarih</label><input type="date" id="atar"></div>
+          <div class="fd"><label>Çalışan</label><select id="acal"></select></div>
+          <div class="fd"><label>Tutar</label><input id="atut" inputmode="decimal" placeholder="1.000"><span class="muted onizleme" id="atut-onizleme"></span></div>
+        </div>
+        <div class="fr"><div class="fd"><label>Açıklama</label><input id="aac" placeholder="Avans / Bayram avansı..."></div><div></div></div>
+        <button class="bp" onclick="kaydetA()">✓ Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MESAİLER ===================== -->
+  <div class="pg" id="pg-mesailer">
+    <div class="ph"><div class="stl" style="margin:0"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Mesailer</div><button class="bp" onclick="swt('m','m-ekle')">+ Mesai ekle</button></div>
+    <div class="tabs"><button class="tab on" onclick="swt('m','m-liste')">Tüm mesailer</button><button class="tab" onclick="swt('m','m-ekle')">Yeni mesai</button></div>
+    <div class="tp on" id="tm-liste">
+      <div class="frow">
+        <label>Ay:</label><select id="mes-ay" onchange="rM()"><option value="">Tümü</option></select>
+        <label><input type="checkbox" id="mes-arsiv" onchange="rM()"> Arşivi göster</label>
+        <label><input type="checkbox" id="mes-silinen" onchange="rM()"> Silinenleri göster</label>
+        <label>Onay:</label><select id="mes-onay" onchange="rM()"><option value="">Tümü</option><option>Onaylı</option><option>Bekliyor</option><option>Onaysız</option></select>
+      </div>
+      <div class="card scroll" style="padding:0"><table>
+        <thead><tr><th>Tarih</th><th>Çalışan</th><th class="r">Saat</th><th class="r">Tutar</th><th>Sebep</th><th>Onay</th><th></th></tr></thead>
+        <tbody id="mtb"></tbody>
+        <tfoot id="mtf"></tfoot>
+      </table></div>
+    </div>
+    <div class="tp" id="tm-ekle">
+      <div class="card">
+        <div class="fr fr3"><div class="fd"><label>Tarih</label><input type="date" id="mtar"></div><div class="fd"><label>Çalışan</label><select id="mcal"></select></div><div class="fd"><label>Saat</label><input id="msaat" inputmode="decimal" placeholder="2"><span class="muted onizleme" id="msaat-onizleme"></span></div></div>
+        <div class="fr fr3"><div class="fd"><label>Sebep</label><input id="mseb" placeholder="Kaynak / Temizlik / Pazar günü..."></div><div class="fd"><label>Onay durumu</label><select id="monay"><option>Onaylı</option><option>Bekliyor</option><option>Onaysız</option></select></div><div></div></div>
+        <button class="bp" onclick="kaydetM()">✓ Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== BORDRO ====================== -->
+  <div class="pg" id="pg-bordro">
+    <div class="stl"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Aylık hak ediş ve bakiye</div>
+    <div class="card">
+      <div style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap">
+        <div class="fd" style="flex:0 0 200px"><label>Ay seç</label><select id="bay" onchange="bAyDegisti()"></select></div>
+        <div class="boz" id="b-ozet"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="stl">Hak ediş / ödeme gir</div>
+      <div class="fr fr3">
+        <div class="fd"><label>Tür</label><select id="btur"><option value="hakEdisler">Hak ediş</option><option value="odemeler">Ödeme (maaş ödemesi)</option></select></div>
+        <div class="fd"><label>Çalışan</label><select id="bcal"></select></div>
+        <div class="fd"><label>Tutar</label><input id="btut" inputmode="decimal" placeholder="28.000"><span class="muted onizleme" id="btut-onizleme"></span></div>
+      </div>
+      <div class="fr fr3">
+        <div class="fd"><label>Tarih</label><input type="date" id="btar"><span class="muted">Ay seçince o ayın son günü otomatik yazılır</span></div>
+        <div class="fd"><label>Açıklama</label><input id="bac" placeholder="Ekim 2026 hak edişi"></div>
+        <div class="fd" style="justify-content:flex-end"><button class="bp" onclick="kaydetB()">✓ Kaydet</button></div>
+      </div>
+    </div>
+    <div class="card scroll" style="padding:0"><table>
+      <thead><tr><th>Çalışan</th><th class="r">Hak ediş</th><th class="r">Mesai (bilgi)</th><th class="r">Avans</th><th class="r">Ödeme</th><th class="r">Ay neti</th><th class="r">Ay sonu bakiye</th></tr></thead>
+      <tbody id="btb"></tbody>
+      <tfoot id="btf"></tfoot>
+    </table></div>
+    <div class="not" id="b-not"></div>
+  </div>
+
+  <!-- ===================== YEDEKLER ===================== -->
+  <div class="pg" id="pg-yedekler">
+    <div class="ph">
+      <div class="stl" style="margin:0"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>Yedekler ve veri güvenliği</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="bs" href="api/disa-aktar" style="text-decoration:none">⭳ Veriyi indir (JSON)</a>
+        <button class="bs" onclick="yedekListesiYukle()">↻ Listeyi yenile</button>
+      </div>
+    </div>
+    <div class="not">
+      Panel her kaydetmede otomatik yedek alır (son 60 kayıt) ve <b>günde bir</b> ayrı bir günlük kopya tutar (son 30 gün).
+      Geri yükleme yapılırken de mevcut durum önce yedeklenir — yani geri yükleme de geri alınabilir.
+      Yedekler sunucuda <span class="muted">__VERI_DIZINI__/yedek</span> ve <span class="muted">/gunluk</span> klasörlerindedir.
+    </div>
+    <div class="card scroll" style="padding:0"><table>
+      <thead><tr><th>Zaman</th><th>Tür</th><th>Boyut</th><th>İçerik (çalışan / hak ediş / avans / ödeme / mesai)</th><th></th></tr></thead>
+      <tbody id="ytb"><tr><td colspan="5"><div class="empty">Yükleniyor...</div></td></tr></tbody>
+    </table></div>
+  </div>
+
+  <!-- ====================== YARDIM ====================== -->
+  <div class="pg" id="pg-yardim">
+    <div class="stl"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Nasıl kullanılır?</div>
+
+    <div class="tc2">
+      <div class="card">
+        <div class="stl">Bakiye nasıl hesaplanır?</div>
+        <p style="font-size:13px;line-height:1.7;color:#444">
+          <b>Bakiye = devir + hak edişler − avanslar − ödemeler</b><br>
+          “Devir” = 30.09.2026 tarihindeki başlangıç bakiyesi. Bu tarihten önceki hareketler <b>arşiv</b>lidir ve
+          etkileri devirde toplandığı için <b>tekrar sayılmaz</b> (listelerde “Arşivi göster” ile görülebilirler).
+          “Silindi” işaretli kayıtlar da hiçbir toplama girmez.
+        </p>
+      </div>
+      <div class="card">
+        <div class="stl">Kaydetme</div>
+        <p style="font-size:13px;line-height:1.7;color:#444">
+          Bir kaydı <b>eklerken</b> formdaki “✓ Kaydet”e basarsın; ondan sonra o kaydın üzerinde yaptığın her değişiklik
+          <b>yaklaşık 1 saniye sonra kendiliğinden</b> sunucuya yazılır, ayrıca kaydetmen gerekmez.
+          Sağ üstteki <b>yeşil nokta “Kayıtlı ✓”</b> demektir. Kırmızı görürsen sayfa kapanırken uyarılır ve yaptığın
+          değişiklik tarayıcıda <b>taslak</b> olarak saklanır — sayfayı tekrar açtığında geri yükleyebilirsin.
+        </p>
+      </div>
+      <div class="card">
+        <div class="stl">Silme her zaman geri alınabilir</div>
+        <p style="font-size:13px;line-height:1.7;color:#444">
+          Kayıtlar gerçekten silinmez: <b>Sil</b> → “Silinenleri göster” işaretlenip <b>Geri al</b> ile döndürülür.
+          Çalışan <b>Pasife al</b> ile listeden gizlenir; kayıtları silinmez ve bakiyesi
+          <b>toplamdan düşmez</b> (Özet’de “pasif” rozetiyle görünür).
+        </p>
+      </div>
+      <div class="card">
+        <div class="stl">Yedekler ve geri dönüş</div>
+        <p style="font-size:13px;line-height:1.7;color:#444">
+          Her kayıtta sunucuda otomatik yedek alınır (son 60), ayrıca <b>günde bir</b> kopya tutulur (30 gün).
+          <b>Yedekler</b> sayfasından herhangi bir yedeği görebilir, indirebilir ya da <b>geri yükleyebilirsin</b>
+          (geri yüklemeden önce mevcut durum da yedeklenir). “Veriyi indir (JSON)” ile kendi bilgisayarına kopya al.
+        </p>
+      </div>
+      <div class="card">
+        <div class="stl">İki cihazda açıksa</div>
+        <p style="font-size:13px;line-height:1.7;color:#444">
+          Panel telefonda ve bilgisayarda aynı anda açıksa ve birinde değişiklik yapıldıysa, diğerinde kaydederken
+          <b>“başka cihazda değişiklik var”</b> uyarısı çıkar. Veri sessizce kaybolmaz:
+          <b>Yeniden yükle</b> ile sunucudaki son hâli alır, <b>Üzerine kaydet</b> ile bilinçli olarak seninkini yazar.
+        </p>
+      </div>
+      <div class="card">
+        <div class="stl">Bakiye kipi (Yalnız Özet ve Çalışanlar)</div>
+        <p style="font-size:13px;line-height:1.7;color:#444">
+          Özet sayfasının üstündeki <b>Tüm kayıtlar / Bugüne kadar</b> seçimi, bakiye hesaplarına <b>ileri tarihli</b>
+          hak edişlerin katılıp katılmayacağını belirler. <b>Tüm kayıtlar</b>: girdiğin her şey sayılır (yıl sonuna kadar
+          yapılmış sözleşmeler dahil) · <b>Bugüne kadar</b>: yalnız bugüne kadar olan hareketler sayılır. Seçim tarayıcıda
+          hatırlanır ve Çalışanlar sayfasındaki bakiyeleri de etkiler. Bordro’nun “ay sonu bakiye” sütunu her zaman
+          ilgili ayın sonuna göre hesaplanır.
+        </p>
+      </div>
+      <div class="card">
+        <div class="stl">Giriş, oturum, parola</div>
+        <p style="font-size:13px;line-height:1.7;color:#444">
+          Oturum <b>12 saat</b> sürer; sonra tekrar giriş istenir. Sağ üstteki <b>→</b> butonu <b>çıkış</b> yapar
+          (ortak/başkasının bilgisayarında mutlaka çıkış yap). Parolayı unuttuysan ya da değiştirmek istiyorsan
+          sistem yöneticisine haber ver (sunucudaki ortam dosyasında <span class="muted">PANEL_PAROLA</span> ya da <span class="muted">PANEL_PAROLA_HASH</span> + servis yeniden başlatma).
+          5 hatalı denemeden sonra 5 dakika beklemen gerekir.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stl">Sayfalar ne işe yarar?</div>
+      <div class="scroll"><table>
+        <thead><tr><th>Sayfa</th><th>Ne yapar</th></tr></thead>
+        <tbody>
+          <tr><td><b>Özet</b></td><td>Toplam borç, kişi bazında bakiye dağılımı, bu ayın mesaileri ve son avanslar. (Toplam, kayıtlı <b>tüm</b> hareketleri içerir — ileri tarihli hak edişler dahil.)</td></tr>
+          <tr><td><b>Çalışanlar</b></td><td>Kod, pozisyon, net maaş, saat ücreti, güncel bakiye, giriş tarihi. Yeni çalışan ekleme, düzenleme, pasife alma.</td></tr>
+          <tr><td><b>Avanslar</b></td><td>Verilen avanslar. Ay/çalışan filtresi, arşiv ve silinen filtreleri.</td></tr>
+          <tr><td><b>Mesailer</b></td><td>Saat bazlı mesai kayıtları (sebep + onay durumu). “Saat × saat ücreti” sütunu <b>bilgi amaçlıdır</b>; ödeme hak edişe elle girilir, çift sayılmaz.</td></tr>
+          <tr><td><b>Bordro</b></td><td>Ay seç → hak ediş ve maaş ödemesi gir. “Ay neti” = hak ediş − avans − ödeme. “Ay sonu bakiye” = o ayın sonundaki toplam borç.</td></tr>
+          <tr><td><b>Yedekler</b></td><td>Otomatik yedekleri listeler; indirme, geri yükleme ve JSON olarak dışa aktarma.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="not">
+      <b>Kısa özet:</b> Veri yalnızca bu sunucuda (<span class="muted">__VERI_DIZINI__/data.json</span>) tutulur;
+      Odoo’ya, Google Drive’a veya başka bir servise <b>bağlanmaz</b>; hiçbir şifre/anahtar tarayıcıya gitmez.
+      Yanlış bir şey yaparsan “Yedekler” sayfasından geri dönülebilir.
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+/* ------------------------------------------------------------------ durum */
+const API = 'api/data';
+let db = {calisanlar:[],hakEdisler:[],avanslar:[],odemeler:[],mesailer:[]};
+let saveTimer = null;
+let kirlendi = false;
+let yuklemeHatasi = false;
+let surum = '';
+let cakismaVar = false;
+let duzenlenen = null;
+const TASLAK_ANAHTAR = 'personel-panel-taslak';
+const KIP_ANAHTAR = 'personel-panel-bakiye-kipi';
+/* Bakiye kipi: 'hepsi' = kayıtlı tüm hareketler (ileri tarihli hak edişler dahil),
+   'bugun' = yalnız bugüne kadar olan hareketler. Çalışanlar ve Özet aynı kipi kullanır. */
+let bakiyeKipi = 'hepsi';
+try{ bakiyeKipi = localStorage.getItem(KIP_ANAHTAR) === 'bugun' ? 'bugun' : 'hepsi'; }catch(e){}
+/* Kaydedilmemiş değişiklikler kaybolmasın: her değişiklikte tarayıcıda taslak tutulur. */
+function taslakYaz(){
+  try{ localStorage.setItem(TASLAK_ANAHTAR, JSON.stringify({zaman:new Date().toISOString(), veri:db})); }catch(e){}
+}
+function taslakSil(){ try{ localStorage.removeItem(TASLAK_ANAHTAR); }catch(e){} }
+function taslakOku(){
+  try{
+    const ham = localStorage.getItem(TASLAK_ANAHTAR);
+    if(!ham) return null;
+    const t = JSON.parse(ham);
+    return (t && t.veri && Array.isArray(t.veri.calisanlar)) ? t : null;
+  }catch(e){ return null }
+}
+const AYLAR = {1:'Ocak',2:'Şubat',3:'Mart',4:'Nisan',5:'Mayıs',6:'Haziran',7:'Temmuz',8:'Ağustos',9:'Eylül',10:'Ekim',11:'Kasım',12:'Aralık'};
+
+/* ------------------------------------------------------------- yardımcılar */
+function isoYerel(d){const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())}
+const bugun = () => isoYerel(new Date());
+const buAy  = () => bugun().slice(0,7);
+function fmt(n){return (Number(n)||0).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' ₺'}
+function fmtK(n){return (Number(n)||0).toLocaleString('tr-TR',{maximumFractionDigits:0}) + ' ₺'}
+function ini(n){return (n||'').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}
+function ayAdi(v){const [y,m]=v.split('-');return (AYLAR[+m]||m)+' '+y}
+function aySonGunu(ay){const [y,m]=ay.split('-').map(Number);return isoYerel(new Date(y,m,0))}
+/* Türkçe yazımla girilen tutarı sayıya çevirir: "28.000" -> 28000, "1.234,56" -> 1234.56 */
+function tutarOku(ham){
+  let s=String(ham==null?'':ham).trim().replace(/[\s\u00A0₺]/g,'');
+  if(!s) return 0;
+  const negatif=/^-/.test(s);
+  s=s.replace(/[^0-9.,]/g,'');
+  if(s.includes(',')){ s=s.replace(/\./g,'').replace(',','.'); }
+  else if(/\.\d{3}(\.|$)/.test(s)){ s=s.replace(/\./g,''); }
+  const n=parseFloat(s);
+  return isNaN(n)?0:(negatif?-n:n);
+}
+function tutarYaz(ham){return tutarOku(ham).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₺'}
+function dSt(s,m){
+  const d=document.getElementById('dd');
+  d.className='dd'+(s==='spin'?' spin':s==='err'?' err':'');
+  document.getElementById('dst').textContent=m;
+}
+const aktifKayit = r => !r.arsiv && !r.silindi;
+
+/* --------------------------------------------------------------- hesaplar */
+function calisan(kod){return db.calisanlar.find(c=>c.kod===kod)}
+/* Kayıt, seçili bakiye kipine giriyor mu? (bugün kipinde ileri tarihli hareketler sayılmaz) */
+function kapsamda(r){
+  if(!aktifKayit(r)) return false;
+  if(bakiyeKipi !== 'bugun') return true;
+  return !r.tarih || r.tarih <= bugun();
+}
+function bakiye(kod){
+  const c = calisan(kod);
+  if(!c) return 0;
+  const t = (arr) => arr.filter(r=>r.kod===kod && kapsamda(r)).reduce((s,r)=>s+Number(r.tutar||0),0);
+  return Number(c.devir||0) + t(db.hakEdisler) - t(db.avanslar) - t(db.odemeler);
+}
+function kipAyarla(kip){
+  bakiyeKipi = kip === 'bugun' ? 'bugun' : 'hepsi';
+  try{ localStorage.setItem(KIP_ANAHTAR, bakiyeKipi); }catch(e){}
+  renderAll();
+}
+function ayTutar(arr, kod, ay, dahilArsiv){
+  return arr.filter(r=>r.kod===kod && r.tarih && r.tarih.slice(0,7)===ay
+                       && (dahilArsiv ? !r.silindi : aktifKayit(r)))
+            .reduce((s,r)=>s+Number(r.tutar||0),0);
+}
+function aySaat(kod, ay){
+  return db.mesailer.filter(m=>m.kod===kod && m.tarih && m.tarih.slice(0,7)===ay && aktifKayit(m))
+                    .reduce((s,m)=>s+Number(m.saat||0),0);
+}
+function aySonuBakiye(kod, ay){
+  const c = calisan(kod);
+  if(!c) return 0;
+  const kir = (arr) => arr.filter(r=>r.kod===kod && aktifKayit(r) && r.tarih && r.tarih.slice(0,7)<=ay)
+                        .reduce((s,r)=>s+Number(r.tutar||0),0);
+  return Number(c.devir||0) + kir(db.hakEdisler) - kir(db.avanslar) - kir(db.odemeler);
+}
+function tumAylar(){
+  const kume = new Set([buAy()]);
+  [...db.hakEdisler,...db.avanslar,...db.odemeler,...db.mesailer].forEach(r=>{
+    if(r.tarih && /^\d{4}-\d{2}/.test(r.tarih)) kume.add(r.tarih.slice(0,7));
+  });
+  return [...kume].sort().reverse();
+}
+
+/* -------------------------------------------------------- sunucu iletişimi */
+async function yukle(){
+  dSt('spin','Yükleniyor...');
+  try{
+    const y = await fetch(API,{cache:'no-store'});
+    if(y.status===401){ location.href='giris'; return; }
+    if(!y.ok){ const h=await y.json().catch(()=>({})); throw new Error(h.hata||('HTTP '+y.status)); }
+    const d = await y.json();
+    if(!d || !Array.isArray(d.calisanlar)) throw new Error('veri bicimi beklenmiyor');
+    db = Object.assign({calisanlar:[],hakEdisler:[],avanslar:[],odemeler:[],mesailer:[]}, d);
+    surum = d._guncelleme || '';
+    kirlendi = false; yuklemeHatasi = false; cakismaVar = false;
+    uyariTemizle();
+    dSt('ok','Kayıtlı ✓');
+    taslakKontrol();
+  }catch(e){
+    yuklemeHatasi = true;
+    dSt('err','Yükleme hatası');
+    uyariGoster('Veri sunucudan okunamadı: '+e.message+' — <b>kaydetme geçici olarak kapalı</b>. Lütfen tekrar deneyin.','');
+    console.warn(e);
+  }
+  hazirla();
+}
+async function kaydet(zorla){
+  if(yuklemeHatasi){ dSt('err','Kaydetme kapalı (veri yüklenemedi)'); return; }
+  dSt('spin', zorla?'Zorla kaydediliyor...':'Kaydediliyor...');
+  try{
+    const basliklar={'Content-Type':'application/json','X-Panel-Surum':surum||''};
+    if(zorla) basliklar['X-Panel-Zorla']='1';
+    const y = await fetch(API,{method:'POST',headers:basliklar,body:JSON.stringify(db)});
+    if(y.status===401){
+      taslakYaz();
+      dSt('err','Oturum süresi doldu — değişiklikler kaydedilmedi');
+      uyariGoster('⏱️ <b>Oturum süreniz doldu</b> (12 saat). Bu sayfadaki değişiklikler <b>kaydedilmedi</b> ama tarayıcıya <b>taslak</b> olarak alındı; '+
+        'giriş yaptıktan sonra panel bunu size soracak.', '<button class="bag" onclick="location.href=\'giris\'">Yeniden giriş yap</button>');
+      return;
+    }
+    if(y.status===409){
+      const h = await y.json().catch(()=>({}));
+      cakismaVar = true;
+      const cakisma = h.durum==='cakisma';
+      dSt('err', cakisma ? 'Çakışma: başka cihazda değişiklik var' : 'Kayıt reddedildi (koruma)');
+      uyariGoster(cakisma
+        ? '⚠️ <b>Başka bir cihaz/sekmede</b> değişiklik yapılmış (sunucu sürümü farklı). Bu sayfadaki değişiklikler <b>kaydedilmedi</b>. '+
+          'Önce “Yeniden yükle” ile sunucudaki son hâli görün, ya da bilinçli olarak üzerine yazın.'
+        : '🛑 Sunucu bu kaydı <b>kabul etmedi</b>: '+(h.hata||'bilinmeyen neden')+
+          ' (yanlışlıkla veri kaybını önlemek için konulan koruma). Gerçekten böyle olmasını istiyorsanız “Üzerine kaydet” ile zorlayabilirsiniz.',
+        '<button class="bs" onclick="icerikYenile()">↻ Yeniden yükle</button>'+
+        '<button class="bag" onclick="zorlaKaydet()">Üzerine kaydet</button>');
+      return;
+    }
+    if(!y.ok){ const h=await y.json().catch(()=>({})); throw new Error(h.hata||('HTTP '+y.status)); }
+    const d = await y.json();
+    surum = d.surum || d.zaman || surum;
+    kirlendi = false; cakismaVar = false;
+    uyariTemizle(); taslakSil();
+    dSt('ok','Kaydedildi ✓ '+(d.zaman||'').slice(11,16));
+  }catch(e){
+    taslakYaz();
+    dSt('err','Kayıt hatası — değişiklikler yalnız bu sekmede');
+    console.warn(e);
+  }
+}
+function sched(){kirlendi=true;taslakYaz();clearTimeout(saveTimer);saveTimer=setTimeout(()=>kaydet(false),1200)}
+function zorlaKaydet(){clearTimeout(saveTimer);kaydet(true)}
+function icerikYenile(){
+  if(kirlendi && !confirm('Bu sayfada kaydedilmemiş değişiklik var. Sunucudaki son hâl yüklenecek ve değişiklikleriniz kaybolacak. Devam edilsin mi?')) return;
+  clearTimeout(saveTimer);kirlendi=false;cakismaVar=false;uyariTemizle();yukle();
+}
+function uyariGoster(html,butonlar){
+  document.getElementById('uyari-alani').innerHTML =
+    '<div class="not kirmizi"><div>'+html+'</div><div class="btns">'+(butonlar||'')+
+    '<button class="bk" onclick="uyariTemizle()">Kapat</button></div></div>';
+}
+function uyariTemizle(){document.getElementById('uyari-alani').innerHTML=''}
+
+/* Kaydedilmemiş taslak varsa (tarayıcı kapandı, oturum düştü vb.) kullanıcıya sorar. */
+function taslakKontrol(){
+  const t = taslakOku();
+  const alan = document.getElementById('taslak-alani');
+  if(!t){ alan.innerHTML=''; return }
+  const zaman = (t.zaman||'').replace('T',' ').slice(0,16);
+  alan.innerHTML =
+    '<div class="not"><div><b>Bu tarayıcıda kaydedilmemiş bir taslak var</b> ('+zaman+'). '+
+    'Sunucudaki kayıtlı veriyi mi kullanmak istersiniz, yoksa taslağı geri yükleyip kaydetmek mi?</div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">'+
+    '<button class="bp" onclick="taslakGeriYukle()">Taslağı geri yükle</button>'+
+    '<button class="bs" onclick="taslakAt()">Taslağı sil</button></div></div>';
+}
+function taslakGeriYukle(){
+  const t = taslakOku(); if(!t) return;
+  db = Object.assign({calisanlar:[],hakEdisler:[],avanslar:[],odemeler:[],mesailer:[]}, t.veri);
+  document.getElementById('taslak-alani').innerHTML='';
+  hazirla(); kirlendi=true; kaydet(false);
+}
+function taslakAt(){ taslakSil(); document.getElementById('taslak-alani').innerHTML='' }
+
+/* ------------------------------------------------------------------ akış */
+function hazirla(){
+  buildSelects();buildAyFilters();renderAll();
+}
+function pg(id,el){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  el.classList.add('on');
+  if(id==='yedekler') yedekListesiYukle();
+  renderAll();
+}
+function swt(grp,id){
+  const gmap={c:{pg:'calisanlar',panels:['tc-liste','tc-ekle'],ids:['liste','ekle']},
+              a:{pg:'avanslar',panels:['ta-liste','ta-ekle'],ids:['a-liste','a-ekle']},
+              m:{pg:'mesailer',panels:['tm-liste','tm-ekle'],ids:['m-liste','m-ekle']}};
+  const g=gmap[grp];
+  g.panels.forEach(p=>document.getElementById(p).classList.remove('on'));
+  document.querySelectorAll('#pg-'+g.pg+' .tab').forEach(t=>t.classList.remove('on'));
+  const i=g.ids.indexOf(id);
+  if(i>=0){
+    document.getElementById(g.panels[i]).classList.add('on');
+    const tabs=document.querySelectorAll('#pg-'+g.pg+' .tab');
+    if(tabs[i])tabs[i].classList.add('on');
+  }
+}
+function buildSelects(){
+  const secenek = db.calisanlar.filter(c=>c.aktif!==false)
+      .map(c=>`<option value="${c.kod}">${c.ad} (${c.kod})</option>`).join('');
+  ['acal','mcal','bcal'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=secenek});
+  const dl=document.getElementById('pozisyonlar');
+  if(dl) dl.innerHTML=[...new Set(db.calisanlar.map(c=>c.pozisyon).filter(Boolean))].map(p=>`<option value="${p}">`).join('');
+}
+function buildAyFilters(){
+  const aylar=tumAylar();
+  ['av-ay','mes-ay'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const cur=el.value;
+    el.innerHTML='<option value="">Tümü</option>'+aylar.map(a=>`<option value="${a}"${a===cur?' selected':''}>${ayAdi(a)}</option>`).join('');
+  });
+  const bay=document.getElementById('bay');
+  if(bay){
+    const cur=bay.value||buAy();
+    bay.innerHTML=aylar.map(a=>`<option value="${a}"${a===cur?' selected':''}>${ayAdi(a)}</option>`).join('');
+  }
+}
+function renderAll(){rD();rC();rA();rM();rB()}
+
+/* ------------------------------------------------------------------ ÖZET */
+function rD(){
+  const aktifler = db.calisanlar.filter(c=>c.aktif!==false);
+  const pasifler = db.calisanlar.filter(c=>c.aktif===false);
+  const toplamAktif = aktifler.reduce((s,c)=>s+bakiye(c.kod),0);
+  const toplamPasif = pasifler.reduce((s,c)=>s+bakiye(c.kod),0);
+  // bakiye kipi göstergesi
+  const hepsiB = document.getElementById('kip-hepsi'), bugunB = document.getElementById('kip-bugun');
+  const bugunMetin = bugun().split('-').reverse().join('.');
+  if(bakiyeKipi === 'bugun'){ hepsiB.classList.remove('on'); bugunB.classList.add('on'); }
+  else { hepsiB.classList.add('on'); bugunB.classList.remove('on'); }
+  document.getElementById('kip-aciklama').textContent = bakiyeKipi === 'bugun'
+    ? 'Yalnız '+bugunMetin+' tarihine kadar olan hareketler sayılıyor (ileri tarihli hak edişler hariç).'
+    : 'Kayıtlı tüm hareketler sayılıyor ('+bugunMetin+' sonrası tarihli hak edişler dahil).';
+
+  document.getElementById('s-toplam').textContent=fmt(toplamAktif+toplamPasif);
+  const kipAlt = bakiyeKipi === 'bugun' ? 'Bugüne kadar' : 'Tüm kayıtlar dahil';
+  document.getElementById('s-toplam-alt').textContent = pasifler.length
+    ? (aktifler.length+' aktif + '+pasifler.length+' pasif'+(toplamPasif?' (pasifte '+fmtK(toplamPasif)+')':'')+' · '+kipAlt)
+    : kipAlt;
+  document.getElementById('s-cal').textContent=aktifler.length;
+  document.getElementById('s-cal-alt').textContent=db.calisanlar.length+' kayıtlı personel (tümü)';
+
+  const ay=buAy();
+  const hak=db.hakEdisler.filter(r=>r.tarih&&r.tarih.slice(0,7)===ay&&aktifKayit(r)).reduce((s,r)=>s+r.tutar,0);
+  const av =db.avanslar.filter(r=>r.tarih&&r.tarih.slice(0,7)===ay&&aktifKayit(r)).reduce((s,r)=>s+r.tutar,0);
+  const od =db.odemeler.filter(r=>r.tarih&&r.tarih.slice(0,7)===ay&&aktifKayit(r)).reduce((s,r)=>s+r.tutar,0);
+  document.getElementById('s-hak').textContent=fmt(hak);
+  document.getElementById('s-hak-alt').textContent=ayAdi(ay)+' (maaş + mesai)';
+  document.getElementById('s-av').textContent=fmt(av+od);
+  document.getElementById('s-av-alt').textContent='Avans '+fmtK(av)+' · Ödeme '+fmtK(od);
+
+  const sirali=[...db.calisanlar].map(c=>({c,b:bakiye(c.kod)})).sort((x,y)=>y.b-x.b);
+  const enb=sirali.length?Math.max(...sirali.map(x=>Math.abs(x.b)),1):1;
+  const bl=document.getElementById('bakiye-list');
+  bl.innerHTML=sirali.length?sirali.map(({c,b})=>`
+    <div style="padding:8px 0;border-bottom:1px solid #f0f0ee">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <span style="font-size:13px"><span class="av" style="font-size:10px">${ini(c.ad)}</span>${c.ad}${c.aktif===false?' <span class="bdg gr">pasif</span>':''}</span>
+        <strong style="font-size:13px">${fmt(b)}</strong>
+      </div>
+      <div class="bar" style="margin-top:6px"><i style="width:${Math.max(2,Math.round(Math.abs(b)/enb*100))}%"></i></div>
+    </div>`).join(''):'<div class="empty">Kayıt yok</div>';
+
+  const mes=[...db.mesailer].filter(m=>m.tarih&&m.tarih.slice(0,7)===ay&&!m.silindi)
+            .sort((a,b)=>(b.tarih||'')>(a.tarih||'')?1:-1);
+  const mesEl=document.getElementById('son-mes');
+  if(!mes.length){mesEl.innerHTML='<div class="empty">Bu ay mesai kaydı yok</div>'}
+  else{
+    const gecerli=mes.filter(aktifKayit);
+    const toplamSaat=gecerli.reduce((s,m)=>s+Number(m.saat||0),0);
+    mesEl.innerHTML=`<div class="muted" style="margin-bottom:8px">${gecerli.length} kayıt · ${toplamSaat} saat</div>`+
+      mes.slice(0,6).map(m=>{
+        const c=calisan(m.kod);
+        const bc=m.onay==='Onaylı'?'g':m.onay==='Onaysız'?'r':'a';
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0f0ee">
+          <div style="font-size:13px">${c?c.ad:m.kod} <span class="muted">${m.saat} saat · ${m.sebep||'—'}</span></div>
+          <span class="bdg ${bc}">${m.onay||'—'}</span></div>`;
+      }).join('');
+  }
+
+  const sa=[...db.avanslar].filter(aktifKayit).sort((a,b)=>(b.tarih||'')>(a.tarih||'')?1:-1).slice(0,8);
+  const saEl=document.getElementById('son-av');
+  if(!sa.length){saEl.innerHTML='<div class="empty">Avans kaydı yok</div>';return}
+  saEl.innerHTML='<div class="scroll"><table><thead><tr><th>Tarih</th><th>Çalışan</th><th class="r">Tutar</th><th>Açıklama</th></tr></thead><tbody>'+
+    sa.map(a=>{const c=calisan(a.kod);return `<tr><td class="muted">${a.tarih||'—'}</td><td>${c?c.ad:a.kod}</td><td class="r" style="font-weight:600">${fmt(a.tutar)}</td><td class="muted">${a.aciklama||'—'}</td></tr>`}).join('')+
+    '</tbody></table></div>';
+}
+
+/* ------------------------------------------------------------ ÇALIŞANLAR */
+function rC(){
+  const q=((document.getElementById('ara')||{}).value||'').toLowerCase();
+  const pasif=!!(document.getElementById('pasif-goster')||{}).checked;
+  const kipYazi=document.getElementById('c-kip');
+  if(kipYazi) kipYazi.textContent='Bakiye kipi: '+(bakiyeKipi==='bugun'?'bugüne kadar':'tüm kayıtlar');
+  const liste=db.calisanlar
+    .filter(c=>pasif||c.aktif!==false)
+    .filter(c=>!q||(c.ad||'').toLowerCase().includes(q)||(c.kod||'').toLowerCase().includes(q))
+    .map(c=>({c,b:bakiye(c.kod)}))
+    .sort((x,y)=>(x.c.kod||'').localeCompare(y.c.kod||''));
+  const tb=document.getElementById('ctb');
+  if(!liste.length){tb.innerHTML='<tr><td colspan="8"><div class="empty">Çalışan bulunamadı</div></td></tr>';document.getElementById('ctf').innerHTML='';return}
+  tb.innerHTML=liste.map(({c,b})=>`
+    <tr${c.aktif===false?' style="opacity:.5"':''}>
+      <td class="muted" style="font-weight:600">${c.kod}</td>
+      <td><span class="av">${ini(c.ad)}</span>${c.ad}${c.aktif===false?' <span class="bdg gr">pasif</span>':''}</td>
+      <td><span class="bdg b">${c.pozisyon||'—'}</span></td>
+      <td class="r">${fmt(c.maas)}</td>
+      <td class="r muted">${fmtK(c.mesaiSaatUcret||0)}</td>
+      <td class="r" style="font-weight:600;color:${b>0?'#B33A2B':'#16a34a'}">${fmt(b)}</td>
+      <td class="muted">${c.girisTarihi||'—'}</td>
+      <td style="white-space:nowrap">
+        <button class="bk" onclick="duzenleC('${c.kod}')">Düzenle</button>
+        ${c.aktif===false
+          ? `<button class="bk" onclick="aktifC('${c.kod}',true)">Geri al</button>`
+          : `<button class="bd" onclick="aktifC('${c.kod}',false)">Pasife al</button>`}
+      </td>
+    </tr>`).join('');
+  const t=liste.reduce((s,x)=>s+x.b,0);
+  document.getElementById('ctf').innerHTML=`<tr><td colspan="5">Toplam (${liste.length} kişi)</td><td class="r">${fmt(t)}</td><td colspan="2"></td></tr>`;
+}
+function formTemizle(){
+  ['ykod','yad','ypoz','ymaas','ymuc','ytar','ydevir','ynot'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  ['ymaas-onizleme','ymuc-onizleme','ydevir-onizleme'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=''});
+  duzenlenen=null;
+  document.getElementById('c-form-baslik').textContent='Yeni çalışan ekle';
+  document.getElementById('ykod').disabled=false;
+}
+function duzenleC(kod){
+  const c=calisan(kod);if(!c)return;
+  duzenlenen=kod;
+  document.getElementById('ykod').value=c.kod;document.getElementById('ykod').disabled=true;
+  document.getElementById('yad').value=c.ad||'';
+  document.getElementById('ypoz').value=c.pozisyon||'';
+  document.getElementById('ymaas').value=c.maas||'';
+  document.getElementById('ymuc').value=c.mesaiSaatUcret||'';
+  document.getElementById('ytar').value=c.girisTarihi||'';
+  document.getElementById('ydevir').value=c.devir||0;
+  document.getElementById('ynot').value=c.not||'';
+  document.getElementById('c-form-baslik').textContent='Çalışanı düzenle — '+c.ad;
+  swt('c','ekle');
+}
+function kaydetC(){
+  const kod=document.getElementById('ykod').value.trim().toUpperCase();
+  const ad=document.getElementById('yad').value.trim();
+  const maas=tutarOku(document.getElementById('ymaas').value);
+  if(!kod||!ad){alert('Kod ve ad zorunludur.');return}
+  const baska = db.calisanlar.find(c=>c.kod===kod && c.kod!==duzenlenen);
+  if(baska){alert('"'+kod+'" kodu zaten '+(baska.ad||'başka bir çalışan')+' için kullanılıyor. Hareketler karışmasın diye kaydedilmedi.');return}
+  const yeni={
+    kod, ad,
+    pozisyon:document.getElementById('ypoz').value.trim()||'Çalışan',
+    maas,
+    mesaiSaatUcret:tutarOku(document.getElementById('ymuc').value),
+    girisTarihi:document.getElementById('ytar').value||'',
+    not:document.getElementById('ynot').value.trim(),
+    devir:tutarOku(document.getElementById('ydevir').value),
+    aktif:true
+  };
+  if(duzenlenen){
+    const c=calisan(duzenlenen);
+    Object.assign(c,yeni);
+    if(kod!==duzenlenen){ // kod değişti: hareketleri de yeni koda taşı
+      [...db.hakEdisler,...db.avanslar,...db.odemeler,...db.mesailer]
+        .forEach(r=>{if(r.kod===duzenlenen)r.kod=kod});
+      c.kod=kod;
+    }
+  }else{
+    db.calisanlar.push(yeni);
+  }
+  formTemizle();sched();buildSelects();renderAll();
+  swt('c','liste');
+}
+function aktifC(kod,durum){
+  const c=calisan(kod);if(!c)return;
+  if(!durum && !confirm(c.ad+' pasife alınsın mı? Kayıtlar ve bakiyesi silinmez; listeden gizlenir ama toplamlarda kalır.'))return;
+  c.aktif=durum;sched();buildSelects();renderAll();
+}
+
+/* -------------------------------------------------------------- AVANSLAR */
+function rA(){
+  const q=((document.getElementById('av-ara')||{}).value||'').toLowerCase();
+  const ay=(document.getElementById('av-ay')||{}).value||'';
+  const arsiv=!!(document.getElementById('av-arsiv')||{}).checked;
+  const silinen=!!(document.getElementById('av-silinen')||{}).checked;
+  let liste=[...db.avanslar].sort((a,b)=>(b.tarih||'')>(a.tarih||'')?1:-1);
+  if(!arsiv)liste=liste.filter(r=>!r.arsiv);
+  if(!silinen)liste=liste.filter(r=>!r.silindi);
+  if(ay)liste=liste.filter(r=>r.tarih&&r.tarih.slice(0,7)===ay);
+  if(q)liste=liste.filter(r=>{const c=calisan(r.kod);return (r.kod+' '+((c&&c.ad)||'')).toLowerCase().includes(q)});
+  const tb=document.getElementById('atb');
+  if(!liste.length){tb.innerHTML='<tr><td colspan="5"><div class="empty">Kayıt bulunamadı</div></td></tr>';document.getElementById('atf').innerHTML='';return}
+  tb.innerHTML=liste.map(a=>{
+    const c=calisan(a.kod);
+    const i=db.avanslar.indexOf(a);
+    return `<tr${a.silindi?' style="opacity:.45"':''}>
+      <td class="muted">${a.tarih||'—'}${a.arsiv?' <span class="bdg gr">arşiv</span>':''}</td>
+      <td>${c?c.ad:a.kod}</td>
+      <td class="r" style="font-weight:600">${fmt(a.tutar)}</td>
+      <td class="muted">${a.aciklama||'—'}</td>
+      <td>${a.silindi
+        ? `<button class="bk" onclick="geriA(${i})">Geri al</button>`
+        : `<button class="bd" onclick="silA(${i})">Sil</button>`}</td>
+    </tr>`}).join('');
+  const t=liste.filter(aktifKayit).reduce((s,r)=>s+r.tutar,0);
+  document.getElementById('atf').innerHTML=`<tr><td colspan="2">Toplam</td><td class="r">${fmt(t)}</td><td colspan="2"></td></tr>`;
+}
+function kaydetA(){
+  const tarih=document.getElementById('atar').value;
+  const kod=document.getElementById('acal').value;
+  const tutar=tutarOku(document.getElementById('atut').value);
+  if(!tarih||!kod||!tutar){alert('Tarih, çalışan ve tutar zorunludur.');return}
+  db.avanslar.push({tarih,kod,tutar,aciklama:document.getElementById('aac').value.trim()||'Avans',arsiv:false});
+  sched();buildAyFilters();renderAll();
+  document.getElementById('atut').value='';document.getElementById('aac').value='';
+  document.getElementById('atut-onizleme').textContent='';
+  swt('a','a-liste');
+}
+function silA(i){if(!confirm('Bu avans kaydı silinsin mi? (Geri alınabilir)'))return;db.avanslar[i].silindi=true;sched();renderAll()}
+function geriA(i){db.avanslar[i].silindi=false;sched();renderAll()}
+
+/* -------------------------------------------------------------- MESAİLER */
+function rM(){
+  const ay=(document.getElementById('mes-ay')||{}).value||'';
+  const arsiv=!!(document.getElementById('mes-arsiv')||{}).checked;
+  const silinen=!!(document.getElementById('mes-silinen')||{}).checked;
+  const onay=(document.getElementById('mes-onay')||{}).value||'';
+  let liste=[...db.mesailer].sort((a,b)=>(b.tarih||'')>(a.tarih||'')?1:-1);
+  if(!arsiv)liste=liste.filter(r=>!r.arsiv);
+  if(!silinen)liste=liste.filter(r=>!r.silindi);
+  if(ay)liste=liste.filter(r=>r.tarih&&r.tarih.slice(0,7)===ay);
+  if(onay)liste=liste.filter(r=>r.onay===onay);
+  const tb=document.getElementById('mtb');
+  if(!liste.length){tb.innerHTML='<tr><td colspan="7"><div class="empty">Kayıt bulunamadı</div></td></tr>';document.getElementById('mtf').innerHTML='';return}
+  tb.innerHTML=liste.map(m=>{
+    const c=calisan(m.kod);
+    const tutar=c?Math.round(Number(m.saat||0)*Number(c.mesaiSaatUcret||0)):0;
+    const bc=m.onay==='Onaylı'?'g':m.onay==='Onaysız'?'r':'a';
+    const i=db.mesailer.indexOf(m);
+    return `<tr${m.silindi?' style="opacity:.45"':''}>
+      <td class="muted">${m.tarih||'—'}${m.arsiv?' <span class="bdg gr">arşiv</span>':''}</td>
+      <td>${c?c.ad:m.kod}</td>
+      <td class="r">${m.saat} saat</td>
+      <td class="r">${tutar?fmt(tutar):'—'}</td>
+      <td class="muted">${m.sebep||'—'}</td>
+      <td><span class="bdg ${bc}">${m.onay||'—'}</span></td>
+      <td>${m.silindi
+        ? `<button class="bk" onclick="geriM(${i})">Geri al</button>`
+        : `<button class="bd" onclick="silM(${i})">Sil</button>`}</td>
+    </tr>`}).join('');
+  const gor=liste.filter(aktifKayit);
+  const saat=gor.reduce((s,m)=>s+Number(m.saat||0),0);
+  const tl=gor.reduce((s,m)=>{const c=calisan(m.kod);return s+(c?Number(m.saat||0)*Number(c.mesaiSaatUcret||0):0)},0);
+  document.getElementById('mtf').innerHTML=`<tr><td colspan="2">Toplam (${gor.length} kayıt)</td><td class="r">${saat} saat</td><td class="r">${fmt(Math.round(tl))}</td><td colspan="3"></td></tr>`;
+}
+function kaydetM(){
+  const tarih=document.getElementById('mtar').value;
+  const kod=document.getElementById('mcal').value;
+  const saat=tutarOku(document.getElementById('msaat').value);
+  if(!tarih||!kod||!saat){alert('Tarih, çalışan ve saat zorunludur.');return}
+  db.mesailer.push({tarih,kod,saat,sebep:document.getElementById('mseb').value.trim(),onay:document.getElementById('monay').value,arsiv:false});
+  sched();buildAyFilters();renderAll();
+  document.getElementById('msaat').value='';document.getElementById('mseb').value='';
+  document.getElementById('msaat-onizleme').textContent='';
+  swt('m','m-liste');
+}
+function silM(i){if(!confirm('Bu mesai kaydı silinsin mi? (Geri alınabilir)'))return;db.mesailer[i].silindi=true;sched();renderAll()}
+function geriM(i){db.mesailer[i].silindi=false;sched();renderAll()}
+
+/* ---------------------------------------------------------------- BORDRO */
+function bAyDegisti(){
+  const ay=document.getElementById('bay').value;
+  if(/^\d{4}-\d{2}$/.test(ay)) document.getElementById('btar').value=aySonGunu(ay);
+  rB();
+}
+function rB(){
+  const ay=(document.getElementById('bay')||{}).value||buAy();
+  const kesimAy=(db.kesim||'2026-09-30').slice(0,7);
+  const arsivDonem=ay<kesimAy;
+  let tHak=0,tAv=0,tOd=0,tNet=0,tBak=0;
+  const satirlar=db.calisanlar.map(c=>{
+    const hak=ayTutar(db.hakEdisler,c.kod,ay,true);
+    const av =ayTutar(db.avanslar,c.kod,ay,true);
+    const od =ayTutar(db.odemeler,c.kod,ay,true);
+    const saat=aySaat(c.kod,ay);
+    const mesaiT=Math.round(saat*Number(c.mesaiSaatUcret||0));
+    const net=hak-av-od;
+    const bak=arsivDonem?null:aySonuBakiye(c.kod,ay);
+    return {c,hak,av,od,net,bak,saat,mesaiT};
+  }).filter(r=>r.c.aktif!==false || r.hak||r.av||r.od||r.bak)
+    .sort((x,y)=>(y.bak||0)-(x.bak||0));
+  satirlar.forEach(r=>{tHak+=r.hak;tAv+=r.av;tOd+=r.od;tNet+=r.net;tBak+=(r.bak||0)});
+  document.getElementById('b-ozet').innerHTML=
+    `<span>Hak ediş: <strong>${fmt(tHak)}</strong></span>
+     <span>Avans: <strong class="dr">${fmt(tAv)}</strong></span>
+     <span>Ödeme: <strong class="dr">${fmt(tOd)}</strong></span>
+     <span>Ay neti: <strong class="dg">${fmt(tNet)}</strong></span>
+     <span>Ay sonu toplam bakiye: <strong>${fmt(tBak)}</strong></span>`;
+  const tb=document.getElementById('btb');
+  tb.innerHTML=satirlar.map(r=>`
+    <tr>
+      <td><span class="av" style="font-size:10px">${ini(r.c.ad)}</span>${r.c.ad}${r.c.aktif===false?' <span class="bdg gr">pasif</span>':''}</td>
+      <td class="r">${r.hak?fmt(r.hak):'—'}</td>
+      <td class="r muted">${r.saat?r.saat+' saat · '+fmtK(r.mesaiT):'—'}</td>
+      <td class="r" style="color:${r.av?'#dc2626':'#ccc'}">${r.av?fmt(r.av):'—'}</td>
+      <td class="r" style="color:${r.od?'#dc2626':'#ccc'}">${r.od?fmt(r.od):'—'}</td>
+      <td class="r" style="font-weight:600;color:${r.net<0?'#dc2626':'#16a34a'}">${fmt(r.net)}</td>
+      <td class="r" style="font-weight:600">${r.bak===null?'<span class="muted">arşiv</span>':fmt(r.bak)}</td>
+    </tr>`).join('')||'<tr><td colspan="7"><div class="empty">Kayıt yok</div></td></tr>';
+  document.getElementById('btf').innerHTML=`<tr><td>Toplam</td><td class="r">${fmt(tHak)}</td><td></td><td class="r">${fmt(tAv)}</td><td class="r">${fmt(tOd)}</td><td class="r">${fmt(tNet)}</td><td class="r">${arsivDonem?'<span class="muted">—</span>':fmt(tBak)}</td></tr>`;
+  document.getElementById('b-not').innerHTML =
+    `<b>Nasıl okunur:</b> "Ay neti" = hak ediş − avans − ödeme. "Ay sonu bakiye" = ${db.kesim||'30.09.2026'} devri + o tarihe kadarki hak edişler − avanslar − ödemeler. `+
+    `Mesai sütunu <b>bilgi amaçlıdır</b>, hak edişe zaten dahildir (çift sayılmaz). `+
+    `30.09.2026 (kesim) öncesi hareketler <b>arşiv</b>dir; etkileri ${db.kesim||'30.09.2026'} devrinde toplandığı için kesim öncesi aylarda "ay sonu bakiye" <b>devir bakiyesini</b> gösterir.`;
+}
+function kaydetB(){
+  const tur=document.getElementById('btur').value;
+  const kod=document.getElementById('bcal').value;
+  const tutar=tutarOku(document.getElementById('btut').value);
+  let tarih=document.getElementById('btar').value;
+  if(!kod||!tutar){alert('Çalışan ve tutar zorunludur.');return}
+  if(!tarih){
+    const ay=document.getElementById('bay').value;
+    tarih=/^\d{4}-\d{2}$/.test(ay)?aySonGunu(ay):bugun();
+  }
+  const ayniAy=db[tur].filter(r=>r.kod===kod && r.tarih && r.tarih.slice(0,7)===tarih.slice(0,7) && aktifKayit(r));
+  if(ayniAy.length){
+    const toplam=ayniAy.reduce((s,r)=>s+Number(r.tutar||0),0);
+    if(!confirm(ayAdi(tarih.slice(0,7))+' ayında '+kod+' için zaten '+ayniAy.length+' kayıt var (toplam '+fmt(toplam)+'). Yine de eklensin mi?')) return;
+  }
+  const ac=document.getElementById('bac').value.trim()||((tur==='odemeler'?'Ödeme':'Hak ediş')+' '+ayAdi(tarih.slice(0,7)));
+  db[tur].push({tarih,kod,tutar,aciklama:ac,arsiv:false});
+  sched();buildAyFilters();renderAll();
+  document.getElementById('btut').value='';document.getElementById('bac').value='';
+  document.getElementById('btut-onizleme').textContent='';
+}
+
+/* -------------------------------------------------------------- YEDEKLER */
+async function yedekListesiYukle(){
+  const tb=document.getElementById('ytb');
+  tb.innerHTML='<tr><td colspan="5"><div class="empty">Yükleniyor...</div></td></tr>';
+  try{
+    const y=await fetch('api/yedekler',{cache:'no-store'});
+    if(!y.ok) throw new Error('HTTP '+y.status);
+    const d=await y.json();
+    const liste=d.yedekler||[];
+    if(!liste.length){tb.innerHTML='<tr><td colspan="5"><div class="empty">Henüz yedek yok</div></td></tr>';return}
+    tb.innerHTML=liste.map(x=>{
+      const k=x.kayit||{};
+      const icerik = k.hata ? '<span class="bdg r">okunamadı</span>'
+        : `${k.calisanlar} / ${k.hakEdisler} / ${k.avanslar} / ${k.odemeler} / ${k.mesailer}`;
+      const boyut=(x.boyut/1024).toFixed(1)+' KB';
+      return `<tr>
+        <td class="muted">${(x.zaman||'').replace('T',' ')}</td>
+        <td><span class="bdg ${x.tur==='günlük'?'b':'gr'}">${x.tur}</span></td>
+        <td class="muted">${boyut}</td>
+        <td class="muted">${icerik}</td>
+        <td style="white-space:nowrap">
+          <a class="bs" style="padding:5px 9px;font-size:11px;text-decoration:none" href="api/yedek?ad=${encodeURIComponent(x.ad)}">İndir</a>
+          <button class="bag" onclick="yedekGeriYukle('${x.ad}')">Geri yükle</button>
+        </td></tr>`;
+    }).join('');
+  }catch(e){
+    tb.innerHTML='<tr><td colspan="5"><div class="empty">Yedek listesi alınamadı</div></td></tr>';
+    console.warn(e);
+  }
+}
+async function yedekGeriYukle(ad){
+  if(!confirm('DİKKAT: Paneldeki tüm veri bu yedekteki hâline döndürülecek.\n\nYedek: '+ad+'\n\nMevcut durum da önce yedeklenecek, yani bu işlem geri alınabilir.\n\nDevam edilsin mi?')) return;
+  dSt('spin','Geri yükleniyor...');
+  try{
+    const y=await fetch('api/geri-yukle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ad})});
+    const d=await y.json();
+    if(!y.ok) throw new Error(d.hata||('HTTP '+y.status));
+    await yukle();
+    await yedekListesiYukle();
+    dSt('ok','Geri yüklendi ✓');
+  }catch(e){
+    dSt('err','Geri yükleme başarısız');
+    alert('Geri yükleme başarısız: '+e.message);
+  }
+}
+
+/* ------------------------------------------------------------ tutar önizleme */
+[['ymaas','ymaas-onizleme'],['ymuc','ymuc-onizleme'],['ydevir','ydevir-onizleme'],
+ ['atut','atut-onizleme'],['btut','btut-onizleme'],['msaat','msaat-onizleme']].forEach(([g,o])=>{
+  const ge=document.getElementById(g), oe=document.getElementById(o);
+  if(ge&&oe) ge.addEventListener('input',()=>{ oe.textContent = ge.value.trim()? '= '+tutarYaz(ge.value) : ''; });
+});
+
+/* ------------------------------------------------------------------- init */
+document.getElementById('atar').value=bugun();
+document.getElementById('mtar').value=bugun();
+document.getElementById('btar').value=bugun();
+window.addEventListener('beforeunload',e=>{if(kirlendi){e.preventDefault();e.returnValue=''}});
+yukle();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Gizli / uretilen dosyalar — depoya girmemeli
+data.json
+PAROLA
+*.env
+*.json.tmp
+yedek/
+gunluk/
+__pycache__/
+*.pyc
+docs/panel-*.png.tmp
+.DS_Store
