@@ -303,7 +303,7 @@ def basic_dogru(baslik: str) -> bool:
 #  HTTP işleyici
 # --------------------------------------------------------------------------- #
 class Isleyici(BaseHTTPRequestHandler):
-    server_version = "PersonelPaneli/2.1"
+    server_version = "PersonelPaneli/2.2"
     protocol_version = "HTTP/1.1"
 
     # ---------------------------------------------------------------- yardımcı

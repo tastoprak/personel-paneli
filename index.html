@@ -232,7 +232,7 @@
         <span class="muted" id="c-kip"></span>
       </div>
       <div class="card scroll" style="padding:0"><table>
-        <thead><tr><th>Kod</th><th>Ad soyad</th><th>Pozisyon</th><th class="r">Net maaş</th><th class="r">Saat ücreti</th><th class="r">Bakiye</th><th>Giriş</th><th></th></tr></thead>
+        <thead><tr><th>Kod</th><th>Ad soyad</th><th>Pozisyon</th><th class="r">Net maaş</th><th class="r">Saat ücreti</th><th class="r">Bakiye</th><th>Giriş / Çıkış</th><th></th></tr></thead>
         <tbody id="ctb"></tbody>
         <tfoot id="ctf"></tfoot>
       </table></div>
@@ -248,8 +248,11 @@
         </div>
         <div class="fr fr3">
           <div class="fd"><label>İşe giriş tarihi</label><input type="date" id="ytar"></div>
+          <div class="fd"><label>İşten çıkış tarihi</label><input type="date" id="ycikis"><span class="muted">Boş = halen çalışıyor</span></div>
           <div class="fd"><label>Devir bakiyesi</label><input id="ydevir" inputmode="decimal" placeholder="0"><span class="muted">Kesim (01.10.2026) öncesi biriken bakiye</span><span class="muted onizleme" id="ydevir-onizleme"></span></div>
-          <div class="fd"><label>Not</label><input id="ynot" placeholder="Sigorta kapsam dışı"></div>
+        </div>
+        <div class="fr">
+          <div class="fd"><label>Not</label><input id="ynot" placeholder="Sigorta kapsam dışı"></div><div></div>
         </div>
         <button class="bp" onclick="kaydetC()">✓ Kaydet</button>
         <button class="bs" onclick="formTemizle()">Vazgeç</button>
@@ -336,7 +339,7 @@
       </div>
     </div>
     <div class="card scroll" style="padding:0"><table>
-      <thead><tr><th>Çalışan</th><th class="r">Hak ediş</th><th class="r">Mesai (bilgi)</th><th class="r">Avans</th><th class="r">Ödeme</th><th class="r">Ay neti</th><th class="r">Ay sonu bakiye</th></tr></thead>
+      <thead><tr><th>Çalışan</th><th class="r">Hak ediş</th><th class="r">Günlük hesap</th><th class="r">Mesai (bilgi)</th><th class="r">Avans</th><th class="r">Ödeme</th><th class="r">Ay neti</th><th class="r">Ay sonu bakiye</th></tr></thead>
       <tbody id="btb"></tbody>
       <tfoot id="btf"></tfoot>
     </table></div>
@@ -437,10 +440,11 @@
         <thead><tr><th>Sayfa</th><th>Ne yapar</th></tr></thead>
         <tbody>
           <tr><td><b>Özet</b></td><td>Toplam borç, kişi bazında bakiye dağılımı, bu ayın mesaileri ve son avanslar. (Toplam, kayıtlı <b>tüm</b> hareketleri içerir — ileri tarihli hak edişler dahil.)</td></tr>
-          <tr><td><b>Çalışanlar</b></td><td>Kod, pozisyon, net maaş, saat ücreti, güncel bakiye, giriş tarihi. Yeni çalışan ekleme, düzenleme, pasife alma.</td></tr>
+          <tr><td><b>Çalışanlar</b></td><td>Kod, pozisyon, net maaş, saat ücreti, güncel bakiye, işe giriş / işten çıkış tarihi. Yeni çalışan ekleme, düzenleme, pasife alma.</td></tr>
           <tr><td><b>Avanslar</b></td><td>Verilen avanslar. Ay/çalışan filtresi, arşiv ve silinen filtreleri.</td></tr>
           <tr><td><b>Mesailer</b></td><td>Saat bazlı mesai kayıtları (sebep + onay durumu). “Saat × saat ücreti” sütunu <b>bilgi amaçlıdır</b>; ödeme hak edişe elle girilir, çift sayılmaz.</td></tr>
-          <tr><td><b>Bordro</b></td><td>Ay seç → hak ediş ve maaş ödemesi gir. “Ay neti” = hak ediş − avans − ödeme. “Ay sonu bakiye” = o ayın sonundaki toplam borç.</td></tr>
+          <tr><td><b>Bordro</b></td><td>Ay seç → hak ediş ve maaş ödemesi gir. “Ay neti” = hak ediş − avans − ödeme. “Ay sonu bakiye” = o ayın sonundaki toplam borç.
+            <b>Günlük hesap:</b> çalışanın işe giriş veya işten çıkış tarihi o ayın içindeyse maaş, ayın <b>gerçek gün sayısı</b> üzerinden günlük hesaplanır (giriş ve çıkış günü dahil) ve hak edişe <b>otomatik</b> yazılır. Örnek: 28.000 ₺ maaş, 31 günlük ayda 13–31 arası → 19/31 gün = 21.451,61 ₺.</td></tr>
           <tr><td><b>Yedekler</b></td><td>Otomatik yedekleri listeler; indirme, geri yükleme ve JSON olarak dışa aktarma.</td></tr>
         </tbody>
       </table></div>
@@ -558,6 +562,110 @@ function tumAylar(){
   return [...kume].sort().reverse();
 }
 
+/* ------------------------------------------- günlük hak ediş (giriş/çıkış) */
+const GUNLUK_KAYNAK = 'gunluk-hesap';
+/* Ayın gerçek gün sayısı: Şubat 28/29, Nisan 30, Ekim 31. */
+function ayGunSayisi(ay){ const [y,m]=ay.split('-').map(Number); return new Date(y,m,0).getDate(); }
+function ayKisa(ay){ return (AYLAR[+ay.slice(5,7)]||'').slice(0,3); }
+/* Bir çalışanın o ay için günlük hesapla hak ettiği tutar.
+   Giriş ve çıkış günü çalışılmış sayılır. Tam ay ise doğrudan maaş döner. */
+function gunlukHesap(c, ay){
+  const ayGun = ayGunSayisi(ay);
+  const maas = Number(c.maas||0);
+  const giris = (c.girisTarihi||'').slice(0,7)===ay ? c.girisTarihi : '';
+  const cikis = (c.cikisTarihi||'').slice(0,7)===ay ? c.cikisTarihi : '';
+  let bas = giris ? Number(giris.slice(8,10)) : 1;
+  let bit = cikis ? Number(cikis.slice(8,10)) : ayGun;
+  if(!(bas>=1 && bas<=ayGun)) bas = 1;
+  if(!(bit>=1 && bit<=ayGun)) bit = ayGun;
+  let gun = Math.max(0, bit-bas+1);
+  // Ay, iş ilişkisinin tamamen dışında mı? (henüz başlamadı / ayrıldı)
+  const girisAy = (c.girisTarihi||'').slice(0,7);
+  const cikisAy = (c.cikisTarihi||'').slice(0,7);
+  if(girisAy && girisAy>ay) gun = 0;
+  if(cikisAy && cikisAy<ay) gun = 0;
+  const tam = gun===ayGun && gun>0;
+  const tutar = gun>0 ? Math.round((tam ? maas : maas/ayGun*gun)*100)/100 : 0;
+  return {ay, ayGun, bas, bit, gun, tam, tutar, maas, ozel:!!(giris||cikis)};
+}
+function gunlukKayitAciklama(h){
+  return ayAdi(h.ay)+' hak edişi ('+h.bas+'–'+h.bit+' '+ayKisa(h.ay)+' · '+h.gun+'/'+h.ayGun+' gün)';
+}
+/* Çıkış tarihi bugün veya geçmişse "ayrıldı" sayılır (otomatik pasife alma yok). */
+function ayrildiMi(c){ return !!(c && c.cikisTarihi && c.cikisTarihi <= bugun()); }
+/* Bordroda günlük hesap sütunu. */
+function gunlukHucre(c, ay, h){
+  if(!h || !h.ozel || h.gun<=0) return '<span class="muted">—</span>';
+  if(h.tam) return '<span class="muted">tam ay</span>';
+  const kayitlar = db.hakEdisler.filter(r=>r.kod===c.kod && r.tarih && r.tarih.slice(0,7)===ay && !r.silindi);
+  const oto = kayitlar.some(r=>r.kaynak===GUNLUK_KAYNAK);
+  const elle = kayitlar.some(r=>r.kaynak!==GUNLUK_KAYNAK);
+  const bdg = elle ? '<span class="bdg gr">elle</span>'
+            : oto  ? '<span class="bdg g">otomatik</span>'
+                   : '<span class="bdg a">bekliyor</span>';
+  return '<span style="font-size:11px">'+h.bas+'–'+h.bit+' '+ayKisa(ay)+'</span><br>'+
+         '<span class="muted" style="font-size:11px">'+h.gun+'/'+h.ayGun+' gün · '+fmt(h.tutar)+'</span> '+bdg;
+}
+/* Otomatik kayıt üretimi (kesim ayından SONRAKİ aydan bu aya kadar):
+   - sadece giriş/çıkış ayında ve kısmi ayda kayıt açar,
+   - o ay için elle girilmiş hak ediş varsa dokunmaz,
+   - kendi açtığı kaydı giriş/çıkış/maaş değişince günceller,
+   - silinmiş kaydı geri getirmez. */
+function sonrakiAy(ay){
+  let [y,m] = ay.split('-').map(Number);
+  if(++m>12){ m=1; y++; }
+  return y+'-'+String(m).padStart(2,'0');
+}
+let uretimSuruyor = false;
+function gunlukHakEdisleriUret(){
+  if(uretimSuruyor) return 0;
+  uretimSuruyor = true;
+  let degisen = 0;
+  try{
+    const kesimAy = (db.kesim||'2026-09-30').slice(0,7);
+    const ilkAy = sonrakiAy(kesimAy);      // kesim ayı arşivdir, dokunulmaz
+    const sonAy = buAy();
+    const aylar = [];
+    let [y,m] = ilkAy.split('-').map(Number);
+    const [sy,sm] = sonAy.split('-').map(Number);
+    while((y<sy || (y===sy && m<=sm)) && aylar.length<240){
+      aylar.push(y+'-'+String(m).padStart(2,'0'));
+      if(++m>12){ m=1; y++; }
+    }
+    db.calisanlar.forEach(c=>{
+      aylar.forEach(ay=>{
+        const h = gunlukHesap(c, ay);
+        if(!h.ozel) return;                       // yalnız giriş/çıkış ayı
+        const kayitlar = db.hakEdisler.filter(r=>r.kod===c.kod && r.tarih && r.tarih.slice(0,7)===ay);
+        if(kayitlar.some(r=>r.kaynak!==GUNLUK_KAYNAK)) return;   // elle girilmiş kayıt varsa dokunma
+        const oto = kayitlar.filter(r=>r.kaynak===GUNLUK_KAYNAK);
+        if(oto.length){
+          const r = oto[0];
+          if(r.silindi || h.gun<=0) return;        // kullanıcı silmiş / geçersiz aralık
+          const aciklama = gunlukKayitAciklama(h);
+          if(r.gun!==h.gun || r.ayGun!==h.ayGun || Number(r.tutar||0)!==h.tutar || r.aciklama!==aciklama){
+            r.gun = h.gun; r.ayGun = h.ayGun; r.tutar = h.tutar;
+            r.maas = h.maas; r.aciklama = aciklama;
+            degisen++;
+          }
+          return;
+        }
+        if(h.tam || h.gun<=0 || !h.tutar) return;  // tam ay / sıfır tutar: otomatik kayıt açma
+        db.hakEdisler.push({
+          tarih: aySonGunu(ay), kod: c.kod, tutar: h.tutar,
+          aciklama: gunlukKayitAciklama(h), arsiv:false,
+          kaynak: GUNLUK_KAYNAK, gun: h.gun, ayGun: h.ayGun, maas: h.maas,
+        });
+        degisen++;
+      });
+    });
+  } finally {
+    uretimSuruyor = false;
+  }
+  return degisen;
+}
+
+
 /* -------------------------------------------------------- sunucu iletişimi */
 async function yukle(){
   dSt('spin','Yükleniyor...');
@@ -571,6 +679,8 @@ async function yukle(){
     surum = d._guncelleme || '';
     kirlendi = false; yuklemeHatasi = false; cakismaVar = false;
     uyariTemizle();
+    // Giriş/çıkış ayı için günlük hak ediş kaydı eksikse tamamla (varsa kaydedilir).
+    if(gunlukHakEdisleriUret()>0) sched();
     dSt('ok','Kayıtlı ✓');
     taslakKontrol();
   }catch(e){
@@ -788,12 +898,12 @@ function rC(){
   tb.innerHTML=liste.map(({c,b})=>`
     <tr${c.aktif===false?' style="opacity:.5"':''}>
       <td class="muted" style="font-weight:600">${c.kod}</td>
-      <td><span class="av">${ini(c.ad)}</span>${c.ad}${c.aktif===false?' <span class="bdg gr">pasif</span>':''}</td>
+      <td><span class="av">${ini(c.ad)}</span>${c.ad}${c.aktif===false?' <span class="bdg gr">pasif</span>':''}${ayrildiMi(c)?' <span class="bdg r">ayrıldı</span>':''}</td>
       <td><span class="bdg b">${c.pozisyon||'—'}</span></td>
       <td class="r">${fmt(c.maas)}</td>
       <td class="r muted">${fmtK(c.mesaiSaatUcret||0)}</td>
       <td class="r" style="font-weight:600;color:${b>0?'#B33A2B':'#16a34a'}">${fmt(b)}</td>
-      <td class="muted">${c.girisTarihi||'—'}</td>
+      <td class="muted">${c.girisTarihi||'—'}${c.cikisTarihi?'<br><span style="color:#dc2626">'+c.cikisTarihi+'</span>':''}</td>
       <td style="white-space:nowrap">
         <button class="bk" onclick="duzenleC('${c.kod}')">Düzenle</button>
         ${c.aktif===false
@@ -805,7 +915,7 @@ function rC(){
   document.getElementById('ctf').innerHTML=`<tr><td colspan="5">Toplam (${liste.length} kişi)</td><td class="r">${fmt(t)}</td><td colspan="2"></td></tr>`;
 }
 function formTemizle(){
-  ['ykod','yad','ypoz','ymaas','ymuc','ytar','ydevir','ynot'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  ['ykod','yad','ypoz','ymaas','ymuc','ytar','ycikis','ydevir','ynot'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
   ['ymaas-onizleme','ymuc-onizleme','ydevir-onizleme'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=''});
   duzenlenen=null;
   document.getElementById('c-form-baslik').textContent='Yeni çalışan ekle';
@@ -820,6 +930,7 @@ function duzenleC(kod){
   document.getElementById('ymaas').value=c.maas||'';
   document.getElementById('ymuc').value=c.mesaiSaatUcret||'';
   document.getElementById('ytar').value=c.girisTarihi||'';
+  document.getElementById('ycikis').value=c.cikisTarihi||'';
   document.getElementById('ydevir').value=c.devir||0;
   document.getElementById('ynot').value=c.not||'';
   document.getElementById('c-form-baslik').textContent='Çalışanı düzenle — '+c.ad;
@@ -829,6 +940,12 @@ function kaydetC(){
   const kod=document.getElementById('ykod').value.trim().toUpperCase();
   const ad=document.getElementById('yad').value.trim();
   const maas=tutarOku(document.getElementById('ymaas').value);
+  // İşten çıkış tarihi işe girişten önce olamaz.
+  const girisTarihi=document.getElementById('ytar').value||'';
+  const cikisTarihi=document.getElementById('ycikis').value||'';
+  if(girisTarihi && cikisTarihi && cikisTarihi<girisTarihi){
+    alert('İşten çıkış tarihi, işe giriş tarihinden önce olamaz.');return;
+  }
   if(!kod||!ad){alert('Kod ve ad zorunludur.');return}
   const baska = db.calisanlar.find(c=>c.kod===kod && c.kod!==duzenlenen);
   if(baska){alert('"'+kod+'" kodu zaten '+(baska.ad||'başka bir çalışan')+' için kullanılıyor. Hareketler karışmasın diye kaydedilmedi.');return}
@@ -837,13 +954,15 @@ function kaydetC(){
     pozisyon:document.getElementById('ypoz').value.trim()||'Çalışan',
     maas,
     mesaiSaatUcret:tutarOku(document.getElementById('ymuc').value),
-    girisTarihi:document.getElementById('ytar').value||'',
+    girisTarihi,
+    cikisTarihi,
     not:document.getElementById('ynot').value.trim(),
     devir:tutarOku(document.getElementById('ydevir').value),
     aktif:true
   };
   if(duzenlenen){
     const c=calisan(duzenlenen);
+    yeni.aktif=c.aktif;                    // düzenleme pasif çalışanı geri açmasın
     Object.assign(c,yeni);
     if(kod!==duzenlenen){ // kod değişti: hareketleri de yeni koda taşı
       [...db.hakEdisler,...db.avanslar,...db.odemeler,...db.mesailer]
@@ -853,7 +972,9 @@ function kaydetC(){
   }else{
     db.calisanlar.push(yeni);
   }
-  formTemizle();sched();buildSelects();renderAll();
+  formTemizle();buildSelects();
+  if(gunlukHakEdisleriUret()>0) kirlendi=true;   // giriş/çıkış değişti: günlük hak edişi güncelle
+  sched();renderAll();
   swt('c','liste');
 }
 function aktifC(kod,durum){
@@ -956,6 +1077,7 @@ function geriM(i){db.mesailer[i].silindi=false;sched();renderAll()}
 function bAyDegisti(){
   const ay=document.getElementById('bay').value;
   if(/^\d{4}-\d{2}$/.test(ay)) document.getElementById('btar').value=aySonGunu(ay);
+  if(gunlukHakEdisleriUret()>0) sched();
   rB();
 }
 function rB(){
@@ -971,7 +1093,8 @@ function rB(){
     const mesaiT=Math.round(saat*Number(c.mesaiSaatUcret||0));
     const net=hak-av-od;
     const bak=arsivDonem?null:aySonuBakiye(c.kod,ay);
-    return {c,hak,av,od,net,bak,saat,mesaiT};
+    const gh=gunlukHesap(c,ay);
+    return {c,hak,av,od,net,bak,saat,mesaiT,gh};
   }).filter(r=>r.c.aktif!==false || r.hak||r.av||r.od||r.bak)
     .sort((x,y)=>(y.bak||0)-(x.bak||0));
   satirlar.forEach(r=>{tHak+=r.hak;tAv+=r.av;tOd+=r.od;tNet+=r.net;tBak+=(r.bak||0)});
@@ -984,18 +1107,21 @@ function rB(){
   const tb=document.getElementById('btb');
   tb.innerHTML=satirlar.map(r=>`
     <tr>
-      <td><span class="av" style="font-size:10px">${ini(r.c.ad)}</span>${r.c.ad}${r.c.aktif===false?' <span class="bdg gr">pasif</span>':''}</td>
+      <td><span class="av" style="font-size:10px">${ini(r.c.ad)}</span>${r.c.ad}${r.c.aktif===false?' <span class="bdg gr">pasif</span>':''}${ayrildiMi(r.c)?' <span class="bdg r">ayrıldı</span>':''}</td>
       <td class="r">${r.hak?fmt(r.hak):'—'}</td>
+      <td class="r">${gunlukHucre(r.c,ay,r.gh)}</td>
       <td class="r muted">${r.saat?r.saat+' saat · '+fmtK(r.mesaiT):'—'}</td>
       <td class="r" style="color:${r.av?'#dc2626':'#ccc'}">${r.av?fmt(r.av):'—'}</td>
       <td class="r" style="color:${r.od?'#dc2626':'#ccc'}">${r.od?fmt(r.od):'—'}</td>
       <td class="r" style="font-weight:600;color:${r.net<0?'#dc2626':'#16a34a'}">${fmt(r.net)}</td>
       <td class="r" style="font-weight:600">${r.bak===null?'<span class="muted">arşiv</span>':fmt(r.bak)}</td>
-    </tr>`).join('')||'<tr><td colspan="7"><div class="empty">Kayıt yok</div></td></tr>';
+    </tr>`).join('')||'<tr><td colspan="8"><div class="empty">Kayıt yok</div></td></tr>';
   document.getElementById('btf').innerHTML=`<tr><td>Toplam</td><td class="r">${fmt(tHak)}</td><td></td><td class="r">${fmt(tAv)}</td><td class="r">${fmt(tOd)}</td><td class="r">${fmt(tNet)}</td><td class="r">${arsivDonem?'<span class="muted">—</span>':fmt(tBak)}</td></tr>`;
   document.getElementById('b-not').innerHTML =
     `<b>Nasıl okunur:</b> "Ay neti" = hak ediş − avans − ödeme. "Ay sonu bakiye" = ${db.kesim||'30.09.2026'} devri + o tarihe kadarki hak edişler − avanslar − ödemeler. `+
     `Mesai sütunu <b>bilgi amaçlıdır</b>, hak edişe zaten dahildir (çift sayılmaz). `+
+    `<b>Günlük hesap:</b> işe giriş veya işten çıkış tarihi ayın içindeyse maaş, ayın gerçek gün sayısı üzerinden hesaplanır (giriş ve çıkış günü dahil) ve hak edişe otomatik yazılır. `+
+    `O ay için elle hak ediş girdiysen otomatik hesap devre dışı kalır. `+
     `30.09.2026 (kesim) öncesi hareketler <b>arşiv</b>dir; etkileri ${db.kesim||'30.09.2026'} devrinde toplandığı için kesim öncesi aylarda "ay sonu bakiye" <b>devir bakiyesini</b> gösterir.`;
 }
 function kaydetB(){
@@ -1007,6 +1133,16 @@ function kaydetB(){
   if(!tarih){
     const ay=document.getElementById('bay').value;
     tarih=/^\d{4}-\d{2}$/.test(ay)?aySonGunu(ay):bugun();
+  }
+  // Günlük hesapla otomatik yazılmış kayıt varsa, elle giriş onun yerine geçsin (çift sayılmasın).
+  if(tur==='hakEdisler'){
+    const oto=db.hakEdisler.filter(r=>r.kod===kod && r.tarih && r.tarih.slice(0,7)===tarih.slice(0,7)
+                   && r.kaynak===GUNLUK_KAYNAK && !r.silindi);
+    if(oto.length){
+      const ot=oto.reduce((s,r)=>s+Number(r.tutar||0),0);
+      if(!confirm('Bu ay için günlük hesap otomatik yazıldı ('+fmt(ot)+'). Elle gireceğin tutar onun yerine geçsin mi?\n\nTamam = otomatik kayıt silinir (geri alınabilir), yeni tutar yazılır.\nİptal = hiçbir şey yapılmaz.')) return;
+      oto.forEach(r=>{ r.silindi=true; });
+    }
   }
   const ayniAy=db[tur].filter(r=>r.kod===kod && r.tarih && r.tarih.slice(0,7)===tarih.slice(0,7) && aktifKayit(r));
   if(ayniAy.length){

@@ -18,16 +18,21 @@ standart kütüphanesi ve tek bir HTML dosyası; veri sunucudaki tek bir JSON do
 | Sayfa | Ne yapar |
 |---|---|
 | **Özet** | Toplam personel bakiyesi, kişi bazlı dağılım, bu ayın mesaileri, son avanslar. Bakiye kipi: *tüm kayıtlar* / *bugüne kadar* |
-| **Çalışanlar** | Kod, pozisyon, net maaş, saat ücreti, giriş tarihi, güncel bakiye |
+| **Çalışanlar** | Kod, pozisyon, net maaş, saat ücreti, işe giriş / işten çıkış tarihi, güncel bakiye |
 | **Avanslar** | Verilen avanslar; ay ve çalışan filtresi, arşiv/silinmiş görünümü |
 | **Mesailer** | Saat bazlı mesai kayıtları (sebep + onay durumu); "saat × saat ücreti" bilgi amaçlıdır |
-| **Bordro** | Ay seç → hak ediş/ödeme gir; ay neti ve ay sonu bakiye otomatik |
+| **Bordro** | Ay seç → hak ediş/ödeme gir; ay ortasında giriş/çıkış varsa **günlük hak ediş** otomatik; ay neti ve ay sonu bakiye |
 | **Yedekler** | Otomatik yedekler, indirme, geri yükleme, JSON dışa aktarma |
 | **Yardım** | Panel içi kullanım kılavuzu |
 
 Diğer özellikler:
 
 - **Türkçe para yazımı**: `28.000`, `1.234,56`, `₺ 5.000` gibi girişler doğru okunur.
+- **Günlük hak ediş**: İşe giriş veya işten çıkış tarihi ayın içindeyse maaş, ayın **gerçek gün sayısı** üzerinden
+  günlük hesaplanır (giriş ve çıkış günü dahil) ve hak edişe **otomatik** yazılır. Örn. 30.000 ₺ maaş,
+  13–31 Ekim = 19/31 gün → **18.387,10 ₺**. O ay elle hak ediş girildiyse otomatik hesap devre dışı kalır;
+  otomatik kayıtlar `kaynak: "gunluk-hesap"` ile işaretlidir ve giriş/çıkış/maaş düzeltilince güncellenir.
+  Tam ay çalışanlar için otomatik kayıt açılmaz (maaş hak edişi eskisi gibi elle girilir).
 - **Otomatik kaydetme**: her değişiklik ~1 saniye sonra kaydedilir; sağ üstteki nokta durumu gösterir.
 - **Veri kaybına karşı korumalar**: yapılmamış değişiklik tarayıcıda *taslak* olarak tutulur; iki cihazda aynı anda
   değişiklik yapılırsa **çakışma (409)** ile uyarır, sessizce üzerine yazmaz; yanlışlıkla tüm çalışan listesini
@@ -103,8 +108,11 @@ sudo systemctl restart personel-panel
 {
   "calisanlar": [ { "kod": "K001", "ad": "Ali Yılmaz", "pozisyon": "Kaynakçı",
                     "maas": 32000, "mesaiSaatUcret": 200, "girisTarihi": "2023-03-15",
-                    "not": "", "devir": 62400, "aktif": true } ],
-  "hakEdisler": [ { "tarih": "2026-10-31", "kod": "K001", "tutar": 32000, "aciklama": "Ekim 2026 hak edişi" } ],
+                    "cikisTarihi": "", "not": "", "devir": 62400, "aktif": true } ],
+  "hakEdisler": [ { "tarih": "2026-10-31", "kod": "K001", "tutar": 32000, "aciklama": "Ekim 2026 hak edişi" },
+                  { "tarih": "2026-10-31", "kod": "K006", "tutar": 18387.10,
+                    "aciklama": "Ekim 2026 hak edişi (13–31 Eki · 19/31 gün)",
+                    "kaynak": "gunluk-hesap", "gun": 19, "ayGun": 31, "maas": 30000 } ],
   "avanslar":   [ { "tarih": "2026-10-05", "kod": "K001", "tutar": 2000, "aciklama": "Nakit avans" } ],
   "odemeler":   [ { "tarih": "2026-10-03", "kod": "K001", "tutar": 32000, "aciklama": "Eylül 2026 maaş ödemesi" } ],
   "mesailer":   [ { "tarih": "2026-10-03", "kod": "K001", "saat": 3, "sebep": "Sevkiyat",
@@ -119,6 +127,9 @@ Kurallar:
   O tarihten önceki hareketleri girmek isterseniz `"arsiv": true` ekleyin — listede görünür ama bakiyeye tekrar eklenmez.
 - **Silme yoktur**: silinen kayda `"silindi": true` yazılır, listede geçmişi görünür ve geri alınabilir.
 - `aktif: false` olan çalışan listede gizlenir; kayıtları ve bakiyesi toplamdan **düşmez**.
+- `cikisTarihi`: işten çıkış tarihi (boş = halen çalışıyor). Giriş/çıkış ayında maaş günlük hesaplanır;
+  otomatik oluşan hak ediş kaydı `kaynak: "gunluk-hesap"`, `gun`, `ayGun`, `maas` alanlarını taşır.
+  `silindi: true` yapılan otomatik kayıt bir daha üretilmez.
 - Sunucu her kaydetmede `_guncelleme` alanını kendisi yazar (çakışma denetimi için).
 
 ## Yedekleme
@@ -146,7 +157,7 @@ Kurallar:
 ## Testler
 
 ```bash
-node test/test_mantik.js        # 63 kontrol: panel mantığı (tarayıcısız)
+node test/test_mantik.js        # 101 kontrol: panel mantığı (tarayıcısız)
 bash test/test_http.sh          # 34 kontrol: HTTP davranışı (giriş, çakışma, yedek, limitler)
 bash test/ekran-goruntusu.sh    # ekran görüntüleri (chromium gerekir)
 ```
@@ -158,6 +169,22 @@ Testler `ornek-data.json` ile çalışır; kendi verinize dokunmaz. GitHub Actio
 - Tek kullanıcı, tek dosya, tek süreç. Çok kullanıcılı yetkilendirme, çok şubeli yapı, muhasebe entegrasyonu yoktur.
 - Bordro, resmi puantaj/İK yazılımı yerine geçmez; prim, kesinti, SGK hesabı yapmaz — elle girilen tutarları takip eder.
 - Mesai saatleri bilgi amaçlıdır; ödeme tutarı hak ediş olarak elle girilir (çift sayımı önlemek için).
+
+## Sürüm notları
+
+### v1.1.0 — 2026-10-21
+- **Günlük hak ediş (yeni):** İşe giriş veya işten çıkış tarihi ayın içindeyse maaş, ayın gerçek gün sayısı
+  üzerinden günlük hesaplanır (giriş ve çıkış günü dahil) ve hak edişe otomatik yazılır.
+  - Tam ay çalışanlar için otomatik kayıt açılmaz; o ay için elle hak ediş girildiyse otomatik hesap devre dışı kalır.
+  - Otomatik kayıtlar `kaynak: "gunluk-hesap"` ile işaretlidir; giriş/çıkış/maaş düzeltilince güncellenir,
+    silinen kayıt geri getirilmez.
+  - Yalnızca kayıt tutulan (kesim sonrası) aylar için çalışır; arşiv ve gelecek aylara yazmaz.
+- **Çalışanlar:** "İşten çıkış tarihi" alanı (çıkış < giriş doğrulaması), listede "Giriş / Çıkış" sütunu ve
+  "ayrıldı" etiketi. Otomatik pasife alma yoktur.
+- **Bordro:** "Günlük hesap" sütunu (gün aralığı · n/m gün · tutar · otomatik/elle etiketi) ve güncelleme notu.
+- **Düzeltme:** Çalışan düzenlendiğinde pasif kayıt artık istem dışı aktifleşmiyor.
+- **Testler:** 63 → **101** mantık kontrolü (giriş/çıkış, Şubat 28/29, 31 günlük ay, aynı ay giriş+çıkış,
+  çift kayıt koruması, elle ezme, silinen kaydın geri gelmemesi).
 
 ## Katkı
 

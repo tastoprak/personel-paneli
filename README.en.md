@@ -20,16 +20,21 @@ only, one HTML file, and all data in a single JSON file on your server.
 | Page | What it does |
 |---|---|
 | **Özet (Dashboard)** | Total outstanding, per-person breakdown, this month's overtime, latest advances. Balance mode: *all records* / *up to today* |
-| **Çalışanlar** | Employees: code, position, net salary, hourly rate, hire date, current balance |
+| **Çalışanlar** | Employees: code, position, net salary, hourly rate, hire / exit date, current balance |
 | **Avanslar** | Advances, filtered by month/employee, with archive & deleted views |
 | **Mesailer** | Overtime entries (reason + approval status) |
-| **Bordro** | Pick a month → enter accruals/payments; net and month-end balance computed automatically |
+| **Bordro** | Pick a month → enter accruals/payments; **daily accrual** when hired/left mid-month; net and month-end balance computed automatically |
 | **Yedekler** | Automatic backups: list, download, restore, JSON export |
 | **Yardım** | In-app user guide |
 
 Also:
 
 - **Turkish number parsing**: `28.000`, `1.234,56`, `₺ 5.000`.
+- **Daily accrual**: if the hire or exit date falls inside a month, salary is prorated by the **actual number
+  of days in that month** (both the hire and exit day count) and written to accruals **automatically**.
+  E.g. 30,000 TRY salary, 13–31 October = 19/31 days → **18,387.10 TRY**. If you enter an accrual manually for
+  that month, the automatic calculation steps aside; auto records are tagged `kaynak: "gunluk-hesap"` and are
+  refreshed when hire/exit dates or salary change. Full-month employees get no automatic record.
 - **Autosave** (~1 s), with a status dot; unsaved changes kept as a browser draft.
 - **Conflict safety**: two devices editing at once → `409` instead of silently overwriting; a save that
   would empty the employee list is rejected.
@@ -81,8 +86,12 @@ with your domain and issue a certificate (`certbot --nginx -d panel.example.com`
 
 ```jsonc
 {
-  "calisanlar": [ { "kod": "K001", "ad": "Ali Yılmaz", "maas": 32000, "devir": 62400, "aktif": true, ... } ],
-  "hakEdisler": [ { "tarih": "2026-10-31", "kod": "K001", "tutar": 32000, "aciklama": "..." } ],
+  "calisanlar": [ { "kod": "K001", "ad": "Ali Yılmaz", "maas": 32000, "girisTarihi": "2023-03-15",
+                    "cikisTarihi": "", "devir": 62400, "aktif": true, ... } ],
+  "hakEdisler": [ { "tarih": "2026-10-31", "kod": "K001", "tutar": 32000, "aciklama": "..." },
+                  { "tarih": "2026-10-31", "kod": "K006", "tutar": 18387.10,
+                    "aciklama": "Ekim 2026 hak edişi (13–31 Eki · 19/31 gün)",
+                    "kaynak": "gunluk-hesap", "gun": 19, "ayGun": 31, "maas": 30000 } ],
   "avanslar":   [ { "tarih": "2026-10-05", "kod": "K001", "tutar": 2000, "aciklama": "..." } ],
   "odemeler":   [ { "tarih": "2026-10-03", "kod": "K001", "tutar": 32000, "aciklama": "..." } ],
   "mesailer":   [ { "tarih": "2026-10-03", "kod": "K001", "saat": 3, "sebep": "Sevkiyat", "onay": "Onaylı" } ]
@@ -93,6 +102,9 @@ with your domain and issue a certificate (`certbot --nginx -d panel.example.com`
 - `devir` is the opening balance at the moment you start tracking. Put older movements in with
   `"arsiv": true` — they stay visible but are not counted twice.
 - Deletions set `"silindi": true` (recoverable). `aktif: false` hides an employee but keeps their balance in totals.
+- `cikisTarihi` is the exit date (empty = still employed). In the hire/exit month the salary is prorated daily;
+  an auto-generated accrual carries `kaynak: "gunluk-hesap"`, `gun`, `ayGun`, `maas`. Once such a record is
+  flagged `silindi: true` it is never regenerated.
 - The server writes `_guncelleme` on every save (used for conflict detection).
 
 ## Security notes
@@ -108,7 +120,7 @@ with your domain and issue a certificate (`certbot --nginx -d panel.example.com`
 ## Tests
 
 ```bash
-node test/test_mantik.js        # 63 checks: panel logic without a browser
+node test/test_mantik.js        # 101 checks: panel logic without a browser
 bash test/test_http.sh          # 34 checks: HTTP behaviour (auth, conflicts, backups, limits)
 bash test/ekran-goruntusu.sh    # screenshots (needs chromium)
 ```
@@ -120,6 +132,21 @@ They run against `ornek-data.json` and never touch your data. CI runs on every p
 - One user, one file, one process. No roles, no multi-company, no accounting integration.
 - Not a payroll system: it tracks amounts you enter, it does not compute taxes/SGK.
 - Overtime hours are informational; the paid amount is entered as an accrual (avoiding double counting).
+
+## Release notes
+
+### v1.1.0 — 2026-10-21
+- **Daily accrual (new):** when the hire or exit date falls inside a month, salary is prorated by the actual
+  number of days in that month (hire and exit day inclusive) and written to accruals automatically.
+  - No automatic record for full-month employees; a manual accrual in that month disables the automatic one.
+  - Auto records are tagged `kaynak: "gunluk-hesap"`; they follow hire/exit/salary corrections and are never
+    regenerated once deleted.
+  - Only months covered by tracking are touched (no writes into archived or future months).
+- **Employees:** exit date field (validated against the hire date), "Hire / Exit" column and a "left" badge.
+  No automatic deactivation.
+- **Bordro:** "Daily accrual" column (day range · n/m days · amount · auto/manual tag) and updated help text.
+- **Fix:** editing an employee no longer silently re-activates a deactivated record.
+- **Tests:** 63 → **101** logic checks.
 
 ## Contributing
 

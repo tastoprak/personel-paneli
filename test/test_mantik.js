@@ -55,7 +55,8 @@ function kontrol(baslik, gelen, beklenen) {
   eval(js + `
     global.__t = { get db(){return db}, set db(v){db=v}, renderAll, bakiye, aySonuBakiye, ayTutar, rB, yukle, tDurum(){
       return { kirlendi, yuklemeHatasi, surum, cakismaVar };
-    }, tutarOku, tutarYaz, bAyDegisti, kaydetC, duzenleC, formTemizle, kaydetB, sched, kaydet, taslakOku, taslakKontrol, taslakSil, kipAyarla, fmt };
+    }, tutarOku, tutarYaz, bAyDegisti, kaydetC, duzenleC, formTemizle, kaydetB, sched, kaydet, taslakOku, taslakKontrol, taslakSil, kipAyarla, fmt,
+       ayGunSayisi, gunlukHesap, gunlukHakEdisleriUret, ayrildiMi, gunlukHucre };
   `);
   await new Promise((r) => setTimeout(r, 300));
   const t = global.__t;
@@ -187,6 +188,104 @@ function kontrol(baslik, gelen, beklenen) {
   kontrol('K001 Ekim avans', t.ayTutar(t.db.avanslar, 'K001', '2026-10', true), 2000);
   kontrol('K001 Ekim ay sonu bakiye', t.aySonuBakiye('K001', '2026-10'), 60400);
   kontrol('K001 Kasim (hareket yok) ay sonu bakiye', t.aySonuBakiye('K001', '2026-11'), 60400);
+
+  console.log('--- GUNLUK HESAP: GIRIS / CIKIS ---');
+  kontrol('Subat 2026 gun sayisi', t.ayGunSayisi('2026-02'), 28);
+  kontrol('Subat 2028 (arti yil)', t.ayGunSayisi('2028-02'), 29);
+  kontrol('Ekim gun sayisi', t.ayGunSayisi('2026-10'), 31);
+  const girisC = { kod: 'T010', ad: 'Giris Ornegi', maas: 28000, girisTarihi: '2026-02-07', aktif: true };
+  let gh = t.gunlukHesap(girisC, '2026-02');
+  kontrol('Giris ayi gun sayisi (7-28)', gh.gun, 22);
+  kontrol('Giris ayi tutari (22/28)', gh.tutar.toFixed(2), '22000.00');
+  kontrol('Giris ayi kismi', gh.tam, false);
+  kontrol('Tam ay (Mart) tespiti', t.gunlukHesap(girisC, '2026-03').tam, true);
+  kontrol('Tam ay tutari = maas', t.gunlukHesap(girisC, '2026-03').tutar, 28000);
+  kontrol('Giris oncesi ay 0 gun', t.gunlukHesap(girisC, '2026-01').gun, 0);
+
+  const denemeC = { kod: 'T001', ad: 'Test Cikis', pozisyon: 'Çalışan', maas: 28000,
+    mesaiSaatUcret: 0, girisTarihi: '2026-01-01', cikisTarihi: '2026-10-09', not: '', devir: 0, aktif: true };
+  t.db.calisanlar.push(denemeC);
+  gh = t.gunlukHesap(denemeC, '2026-10');
+  kontrol('Cikis ayi gun sayisi (1-9)', gh.gun, 9);
+  kontrol('Cikis ayi tutari (9/31)', gh.tutar.toFixed(2), '8129.03');
+  kontrol('Cikistan sonraki ay 0 gun', t.gunlukHesap(denemeC, '2026-11').gun, 0);
+  kontrol('Ayrildi etiketi', t.ayrildiMi(denemeC), true);
+  denemeC.cikisTarihi = '2099-01-01';
+  kontrol('Gelecek cikis tarihi ayrildi sayilmaz', t.ayrildiMi(denemeC), false);
+  denemeC.cikisTarihi = '2026-10-09';
+
+  // Ayni ay icinde giris + cikis
+  const ayniAyC = { kod: 'T009', ad: 'Ayni Ay', maas: 28000, girisTarihi: '2026-06-05', cikisTarihi: '2026-06-20', aktif: true };
+  kontrol('Ayni ay giris+cikis gun (5-20)', t.gunlukHesap(ayniAyC, '2026-06').gun, 16);
+
+  console.log('--- GUNLUK HESAP: OTOMATIK KAYIT ---');
+  const oncekiAdet = t.db.hakEdisler.length;
+  kontrol('Ilk calistirmada 1 kayit acildi', t.gunlukHakEdisleriUret(), 1);
+  kontrol('Hak edis sayisi +1', t.db.hakEdisler.length, oncekiAdet + 1);
+  let oto = t.db.hakEdisler.find((r) => r.kod === 'T001' && r.kaynak === 'gunluk-hesap');
+  kontrol('Otomatik kayit tutari', oto.tutar.toFixed(2), '8129.03');
+  kontrol('Otomatik kayit tarihi ay sonu', oto.tarih, '2026-10-31');
+  kontrol('Aciklamada gun bilgisi', oto.aciklama.includes('9/31'), true);
+  kontrol('Ikinci calistirma kayit acmaz', t.gunlukHakEdisleriUret(), 0);
+
+  denemeC.cikisTarihi = '2026-10-20';
+  kontrol('Cikis tarihi degisince guncellendi', t.gunlukHakEdisleriUret(), 1);
+  kontrol('Guncel tutar (20/31)', oto.tutar.toFixed(2), '18064.52');
+  kontrol('Cift kayit olusmadi', t.db.hakEdisler.filter((r) => r.kod === 'T001').length, 1);
+  kontrol('Bordroda otomatik etiketi', t.gunlukHucre(denemeC, '2026-10', t.gunlukHesap(denemeC, '2026-10')).includes('otomatik'), true);
+
+  oto.silindi = true;
+  kontrol('Silinen otomatik kayit geri gelmez', t.gunlukHakEdisleriUret(), 0);
+  oto.silindi = false;
+
+  const elleC = { kod: 'T002', ad: 'Elle Kayit', maas: 28000, girisTarihi: '2026-10-10', aktif: true };
+  t.db.calisanlar.push(elleC);
+  t.db.hakEdisler.push({ tarih: '2026-10-31', kod: 'T002', tutar: 5000, aciklama: 'elle girildi', arsiv: false });
+  kontrol('Elle girilen ay icin otomatik kayit yok', t.gunlukHakEdisleriUret(), 0);
+  kontrol('Elle kayit korundu', t.db.hakEdisler.filter((r) => r.kod === 'T002').length, 1);
+
+  const gecmisC = { kod: 'T003', ad: 'Gecmis', maas: 28000, girisTarihi: '2026-09-17', aktif: true };
+  t.db.calisanlar.push(gecmisC);
+  gecmisC.girisTarihi = '2026-09-17';
+  kontrol('Kesim oncesi aya otomatik yazilmaz', t.gunlukHakEdisleriUret(), 0);
+
+  const tamC = { kod: 'T004', ad: 'Tam Ay', maas: 30000, girisTarihi: '2026-10-01', aktif: true };
+  t.db.calisanlar.push(tamC);
+  kontrol('Ayin 1inde giris: otomatik kayit acilmaz', t.gunlukHakEdisleriUret(), 0);
+
+  const maasSifir = { kod: 'T005', ad: 'Maas Sifir', maas: 0, girisTarihi: '2026-10-15', aktif: true };
+  t.db.calisanlar.push(maasSifir);
+  kontrol('Maasi 0 icin kayit acilmaz', t.gunlukHakEdisleriUret(), 0);
+
+  console.log('--- GUNLUK HESAP: ELLE GIRIS OTOMATIGI EZER ---');
+  const elleGecC = { kod: 'T006', ad: 'Elle Gecis', maas: 31000, girisTarihi: '2026-10-10', aktif: true };
+  t.db.calisanlar.push(elleGecC);
+  kontrol('Otomatik kayit acildi', t.gunlukHakEdisleriUret(), 1);
+  el('bay').value = '2026-10'; el('btur').value = 'hakEdisler'; el('bcal').value = 'T006';
+  el('btut').value = '25.000'; el('btar').value = '2026-10-31'; el('bac').value = '';
+  onaylar.length = 0;
+  t.kaydetB();
+  kontrol('Elle giris onayi istendi', onaylar.length, 1);
+  kontrol('Otomatik kayit silindi (geri alinabilir)',
+    t.db.hakEdisler.filter((r) => r.kod === 'T006' && r.kaynak === 'gunluk-hesap').every((r) => r.silindi), true);
+  kontrol('Elle kayit eklendi', t.db.hakEdisler.filter((r) => r.kod === 'T006' && !r.kaynak).length, 1);
+  kontrol('Sonraki uretimde mukerrer yok', t.gunlukHakEdisleriUret(), 0);
+
+  // Test verilerini temizle
+  ['T001', 'T002', 'T003', 'T004', 'T005'].forEach((k) => {
+    t.db.calisanlar = t.db.calisanlar.filter((c) => c.kod !== k);
+  });
+  t.db.hakEdisler = t.db.hakEdisler.filter((r) => !r.kod.startsWith('T0'));
+  t.renderAll();
+
+  console.log('--- CIKIS TARIHI DOGRULAMASI ---');
+  t.duzenleC('K001');
+  el('ycikis').value = '2020-01-01';
+  uyarilar.length = 0;
+  t.kaydetC();
+  kontrol('Cikis girisden once: uyari verildi', uyarilar.length, 1);
+  kontrol('Gecersiz tarih kaydedilmedi', t.db.calisanlar.find((c) => c.kod === 'K001').cikisTarihi || '', '');
+  t.formTemizle();
 
   console.log('--- TASLAK (kaydedilmemis degisiklik) KORUMASI ---');
   t.sched();
